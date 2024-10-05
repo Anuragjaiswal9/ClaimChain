@@ -18,7 +18,7 @@ function Myform() {
 
   return (
     <div className="flex flex-col w-full">
-      <Card className="max-w-full w-[500px] h-[500px]">
+      <Card className="max-w-full w-[340px] h-[400px]">
         <CardBody className="overflow-hidden">
           <Tabs
             fullWidth
@@ -75,7 +75,7 @@ function Myform() {
 
             {/* Sign-up Tab */}
             <Tab key="sign-up" title="Sign up">
-              <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 h-[400px]">
+              <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 h-[300px]">
                 <Input
                   label="Name"
                   placeholder="Enter your name"

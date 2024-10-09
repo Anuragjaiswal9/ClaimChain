@@ -15,57 +15,54 @@ function Mycarousel() {
   );
 
   return (
-    <Carousel plugins={[plugin.current]} className="w-full h-screen max-w-3xl ">
-      <CarouselContent className=" h-screen">
-        <CarouselItem className="h-full ">
-          <div className="h-full p-1">
-            <Card className="h-full">
-              <CardContent className="relative flex flex-col items-center justify-center h-full">
-                <img src="illuus2.png" alt="" className='w-full h-full object-cover' />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t pl-8 pb-8">
-                  <h2 className="text-lg font-semibold">Unlock Your Lost & Found Journey!</h2>
-                  <p className="mt-1 text-sm">Log in with your college email to begin recovering lost items or reporting found treasures on ClaimChain!</p>
-                </div>
-              </CardContent>
-            </Card>
+    <Carousel plugins={[plugin.current]} className="w-full  max-w-5xl  md:h-screen overflow-hidden">
+      <CarouselContent className="sm:h-screen  ">
+        {/* Carousel Slide 1 */}
+        <CarouselItem className="h-full flex flex-col">
+          <div className="h-[70%] max-sm:h-[40%]">
+            <img src="illuus2.png" alt="" className="w-full h-full object-cover" />
+          </div>
+          <div className="h-[30%] max-sm:h-40 bg-gray-900 flex flex-col items-start justify-center p-4 max-sm:p-6 text-white">
+            <h2 className="text-xl max-sm:text-2xl font-semibold">Unlock Your Lost & Found Journey!</h2>
+            <p className="mt-2 max-sm:mt-4 text-sm max-sm:text-base">
+              Log in with your college email to begin recovering lost items or reporting found treasures on ClaimChain!
+            </p>
           </div>
         </CarouselItem>
 
-        <CarouselItem className="h-full">
-          <div className="h-full p-1">
-            <Card className="h-full">
-              <CardContent className="relative flex flex-col items-center justify-center h-full">
-                <img src="illus1.png" alt="" className='w-full h-full object-cover' />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t    pl-8 pb-8">
-                  <h2 className="text-lg font-semibold">Discover Your Recovery Toolkit!</h2>
-                  <p className="mt-1 text-sm">Explore tools that simplify reporting and reclaiming your belongings on ClaimChain!</p>
-                </div>
-              </CardContent>
-            </Card>
+        {/* Carousel Slide 2 */}
+        <CarouselItem className="h-full flex flex-col">
+          <div className="h-[70%] max-sm:h-[40%]">
+            <img src="illus1.png" alt="" className="w-full h-full object-cover" />
+          </div>
+          <div className="h-[30%] max-sm:h-40 bg-blue-900 flex flex-col items-start justify-center p-4 max-sm:p-6 text-white">
+            <h2 className="text-xl max-sm:text-2xl font-semibold">Discover Your Recovery Toolkit!</h2>
+            <p className="mt-2 max-sm:mt-4 text-sm max-sm:text-base">
+              Explore tools that simplify reporting and reclaiming your belongings on ClaimChain!
+            </p>
           </div>
         </CarouselItem>
 
-        <CarouselItem className="h-full">
-          <div className="h-full p-1">
-            <Card className="h-full">
-              <CardContent className="relative flex flex-col items-center justify-center h-full">
-                <img src="illus3.png" alt="" className='w-full h-full object-cover' />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t pl-8 pb-8">
-                  <h2 className="text-lg font-semibold">Reunite and Celebrate!</h2>
-                  <p className="mt-1 text-sm">Meet at a safe location to hand over the item, celebrating the connection and trust built through ClaimChain!</p>
-                </div>
-              </CardContent>
-            </Card>
+        {/* Carousel Slide 3 */}
+        <CarouselItem className="h-full flex flex-col">
+          <div className="h-[70%] max-sm:h-[40%]">
+            <img src="illus3.png" alt="" className="w-full h-full object-cover" />
+          </div>
+          <div className="h-[30%] max-sm:h-40 bg-green-900 flex flex-col items-start justify-center p-4 max-sm:p-6 text-white">
+            <h2 className="text-xl max-sm:text-2xl font-semibold">Reunite and Celebrate!</h2>
+            <p className="mt-2 max-sm:mt-4 text-sm max-sm:text-base">
+              Meet at a safe location to hand over the item, celebrating the connection and trust built through ClaimChain!
+            </p>
           </div>
         </CarouselItem>
       </CarouselContent>
 
-      {/* Optional: Carousel navigation buttons */}
-      <CarouselPrevious className="absolute left-4 top-1/2 transform -translate-y-1/2">
-        <button className="bg-gray-700 text-white rounded px-4 py-2">Previous</button>
+      {/* Carousel navigation buttons */}
+      <CarouselPrevious className="absolute left-4 max-sm:top-[330px] sm:top-[545px] transform -translate-y-1/2">
+        <button className="bg-gray-700 text-white rounded px-3 py-1 max-sm:px-4 max-sm:py-2">Previous</button>
       </CarouselPrevious>
-      <CarouselNext className="absolute right-4 top-1/2 transform -translate-y-1/2">
-        <button className="bg-gray-700 text-white rounded px-4 py-2">Next</button>
+      <CarouselNext className="absolute right-4 max-sm:top-[330px] sm:top-[545px] transform -translate-y-1/2">
+        <button className="bg-gray-700 text-white rounded px-3 py-1 max-sm:px-4 max-sm:py-2">Next</button>
       </CarouselNext>
     </Carousel>
   );

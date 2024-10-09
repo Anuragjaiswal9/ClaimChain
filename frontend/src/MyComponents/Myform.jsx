@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tabs, Tab, Input, Link, Button, Card, CardBody } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
+import axios from 'axios'
 
 function Myform() {
   const {
@@ -10,8 +11,8 @@ function Myform() {
   } = useForm();
 
   async function onSubmit(data) {
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-    console.log("Submitting the form", data);
+    await axios.post("http://localhost:8000/api/v1/users/register",data)
+    console.log(data)
   }
 
   const [selected, setSelected] = React.useState("login");
@@ -79,7 +80,7 @@ function Myform() {
                 <Input
                   label="Name"
                   placeholder="Enter your name"
-                  {...register('name', { required: 'Name is required' })}
+                  {...register('fullName', { required: 'Name is required' })}
                 />
                 {errors.name && <p className='text-red-600'>{errors.name.message}</p>}
 

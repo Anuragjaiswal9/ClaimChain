@@ -2,8 +2,22 @@ import React from 'react';
 import { Tabs, Tab, Input, Link, Button, Card, CardBody } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
 
-function Myform() {
+function Myform({ setIsAuthenticated }) {
+
+  const navigate = useNavigate();
+
+
+  const handleLogin = () => {
+    // Perform login logic here (e.g., API call for authentication)
+    // If login is successful:
+    setIsAuthenticated(true);
+    navigate('/main'); // Redirect to the main page after login
+  };
+
+
+
   const {
     register,
     handleSubmit,
@@ -11,7 +25,7 @@ function Myform() {
   } = useForm();
 
   async function onSubmit(data) {
-    await axios.post("http://localhost:8000/api/v1/users/register",data)
+    await axios.post("http://localhost:8000/api/v1/users/register", data)
     console.log(data)
   }
 

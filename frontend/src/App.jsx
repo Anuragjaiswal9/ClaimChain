@@ -1,36 +1,38 @@
 import React from "react";
-import Mycarousel from "./MyComponents/Mycarousel";
-import Myform from "./MyComponents/Myform";
+import Login from "./MyComponents/Login";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import Mainpage from "./MyComponents/MainPage";
+
+
+
+
+
 
 function App() {
+
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+
+
+
   return (
-    <div className="relative  max-sm:flex max-sm:flex-col">
-      
-      {/* Logo section */}
-      <div className="w-1/2 h-32  max-sm:w-full   max-sm:h-12 flex justify-center items-center max-sm:mb-5 ">
-        <img
-          src="ClaimLogo.png"
-          className=" max-sm:w-60 sm:w-80 mt-10 max-sm:h-14  max-sm:mt-5 left-0 top-0"
+    <Router>
+      <Routes>
+
+        {/* Login Page Route */}
+        <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+
+        {/* Main Page Route: Redirect to login if not authenticated {isAuthenticated ? <MainPage/> : <Navigate to="/login" />} */}
+        <Route
+          path="/main"
+          element={isAuthenticated ? <Mainpage /> : <Navigate to="/login" />} 
         />
-      </div>
 
-      {/* Main content section */}
-      <div className="flex max-sm:flex-col-reverse">
+        {/* Default Route: Redirect to Login <Route path="*" element={<Navigate to="/login" />} /> */ }
         
-        {/* Form Section */}
-        <div className="w-1/2 flex max-sm:w-full  justify-center items-center  ">
-          <div className="max-sm:mt-5 max-sm:mb-5  ">
-            <Myform />
-          </div>
-        </div>
+        <Route path="*" element={<Navigate to="/login" />} />
 
-        {/* Carousel Section */}
-        <div className="w-1/2 max-sm:w-full sm:-mt-32  ">
-          <Mycarousel />
-        </div>
-
-      </div>
-    </div>
+      </Routes>
+    </Router>
   );
 }
 

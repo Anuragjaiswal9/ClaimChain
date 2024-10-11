@@ -1,8 +1,11 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser"
+import { startCronJobs } from "./utils/cronJobs.js";
 
 const app = express();
+
+startCronJobs(); // this function deletes unverified users every minutes automatically
 
 app.use(cors());
 

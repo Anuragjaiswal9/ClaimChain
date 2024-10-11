@@ -2,11 +2,13 @@ import React from 'react'
 import { Navbar, NavbarBrand, NavbarMenuToggle, NavbarContent, NavbarItem, Link, Input , Dropdown , DropdownItem, DropdownTrigger , DropdownMenu , Avatar } from "@nextui-org/react";
 import { Logo } from './Logo';
 import { SearchIcon } from './SearchIcon';
+import { useNavigate } from 'react-router-dom';
 
 
 
 function MyNavbar() {
 
+  const navigate = useNavigate();
 
     return (
 
@@ -75,7 +77,7 @@ function MyNavbar() {
             <DropdownItem className='sm:hidden' key="Found">Found</DropdownItem>
             <DropdownItem key="settings">My Settings</DropdownItem>
             <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
-            <DropdownItem key="logout" color="danger">
+            <DropdownItem key="logout" color="danger"   >
               Log Out
             </DropdownItem>
           </DropdownMenu>

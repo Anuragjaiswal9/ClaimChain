@@ -24,7 +24,7 @@ function App() {
         {/* Main Page Route: Redirect to login if not authenticated {isAuthenticated ? <MainPage/> : <Navigate to="/login" />} */}
         <Route
           path="/main"
-          element={isAuthenticated ? <Mainpage /> : <Navigate to="/login" />} 
+          element={<Mainpage/>}
         />
 
         {/* Default Route: Redirect to Login <Route path="*" element={<Navigate to="/login" />} /> */ }

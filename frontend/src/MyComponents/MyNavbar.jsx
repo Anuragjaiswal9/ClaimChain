@@ -3,10 +3,15 @@ import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Input, Dropdown, 
 import { Logo } from './Logo';
 import { SearchIcon } from './SearchIcon';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux'; 
+import { selectFullName } from '../features/Users/UserSlice'; 
 
 function MyNavbar() {
   const [action, setAction] = useState(null);  // State to track which dropdown item is clicked
   const navigate = useNavigate();
+  const fullName = useSelector(selectFullName);
+
+  
 
   const handleDropdownAction = (key) => {
     setAction(key);  // Set the clicked action
@@ -76,7 +81,7 @@ function MyNavbar() {
           <DropdownMenu aria-label="Profile Actions" variant="flat" onAction={handleDropdownAction}>
             <DropdownItem key="profile" className="h-14 gap-2">
               <p className="font-semibold">Signed in as</p>
-              <p className="font-semibold">zoey@example.com</p>
+              <p className="text-sky-500">{fullName}</p>
             </DropdownItem>
             <DropdownItem className='sm:hidden' key="Home">Home</DropdownItem>
             <DropdownItem className='sm:hidden' key="Lost">Lost</DropdownItem>

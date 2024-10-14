@@ -65,15 +65,9 @@ const registerUser = asyncHandler(async(req, res) => {
         new ApiResponse(200, createdUser, "Verification email sent to your email, please verify")
     );
 
-    //logic for: if user doesnot open the verification link in set amount of time then the user data from database will be automatically deleted
-
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-    //get user details
-    //compare password with hashed password
-    //generate access and refresh token and save in cookie
-    //return success response
     const { email, password } = req.body;
 
     if(!email || !password){
@@ -141,7 +135,7 @@ const logoutUser = asyncHandler( async(req, res) => {
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
     .json(new ApiResponse(200, {}, "User logged out successfully"))
-})
+});
 
 const verifyUser = asyncHandler(async (req, res) => {
     const {id, token} = req.params;
@@ -167,7 +161,10 @@ const verifyUser = asyncHandler(async (req, res) => {
 
     await Token.findByIdAndDelete({_id: id});
 
-    res.status(200, "Email verified successfully");
-})
+    res.redirect("/email-verified");
+    
+});
+
+//reset password
 
 export { registerUser, verifyUser, loginUser, logoutUser };

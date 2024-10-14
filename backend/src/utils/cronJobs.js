@@ -1,16 +1,37 @@
 import { CronJob } from "cron";
 import { User } from "../models/user.model.js";
+import { Token } from "../models/token.model.js";
 
 // this function will delete the user data from database if the user has not verified for more than a minute
 
+// const removeOldUnverifiedUsers = async () => {
+//   const cutoff = new Date(Date.now() - 60 * 1000); // 1 minute ago
+//   const {acknowledged, deletedCount} = await User.deleteMany({ isVerified: false, createdAt: { $lt: cutoff } });
+//   await Token.deleteMany({ isVerified: false, createdAt: { $lt: cutoff } });
+//   console.log(acknowledged, deletedCount);
+//   if(acknowledged){
+//       console.log(`${deletedCount} Unverified users older than 1 minutes have been deleted`);
+//   }
+// };
+
+
 const removeOldUnverifiedUsers = async () => {
-  const cutoff = new Date(Date.now() - 60 * 1000); // 1 minute ago
-  const {acknowledged, deletedCount} = await User.deleteMany({ isVerified: false, createdAt: { $lt: cutoff } });
-  console.log(acknowledged, deletedCount);
-  if(acknowledged){
-      console.log(`${deletedCount} Unverified users older than 1 minutes have been deleted`);
+  try {
+    const cutoff = new Date(Date.now() - 60 * 1000); // 1 minute ago
+    const unverifiedUsers = await User.find({ isVerified: false, createdAt: { $lt: cutoff } });
+    console.log("Unverified Users:", unverifiedUsers);
+
+    const { acknowledged, deletedCount } = await User.deleteMany({ isVerified: false, createdAt: { $lt: cutoff } });
+    console.log(`${deletedCount} unverified users older than 1 minute have been deleted`);
+
+    if (deletedCount > 0) {
+      await Token.deleteMany({ userId: { $in: unverifiedUsers.map(user => user._id) } });
+    }
+  } catch (error) {
+    console.error('Error removing old unverified users:', error);
   }
 };
+
 
 // Schedule to run every minutes (for testing, adjust as needed for production)
 

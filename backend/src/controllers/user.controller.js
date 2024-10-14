@@ -151,15 +151,6 @@ const verifyUser = asyncHandler(async (req, res) => {
     }
     
     await User.updateOne({ _id: id }, { isVerified: true });
-    
-    const updatedUser = await User.findOne({_id: id});
-
-    if(!updatedUser.isVerified){
-        await User.findByIdAndDelete({_id: id});
-        throw new ApiError(410, "User account has been deleted due to unverified email");
-    }
-
-    await Token.findByIdAndDelete({_id: id});
 
     res.redirect("http://localhost:5173/email-verified");
 

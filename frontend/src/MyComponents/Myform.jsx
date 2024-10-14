@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs, Tab, Input, Link, Button, Card, CardBody } from "@nextui-org/react";
-import { useForm } from "react-hook-form";
+import { useForm  } from "react-hook-form";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux'; 
+import { setFullName } from '../features/Users/UserSlice'; 
 
 function Myform({  }) {
 
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
+  
 
   const handleLogin = () => {
     //setIsAuthenticated(true);
@@ -20,7 +25,8 @@ function Myform({  }) {
   // Login form submission
   async function onLoginSubmit(data) {
   const response =   await axios.post("http://localhost:8000/api/v1/users/login", data);
-    console.log(data); 
+    console.log(response.data.data.user.fullName); 
+    dispatch(setFullName(response.data.data.user.fullName)); 
     handleLogin();
 
   }

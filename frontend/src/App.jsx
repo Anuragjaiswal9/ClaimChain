@@ -32,7 +32,7 @@ function App() {
         
         <Route path="*" element={<Navigate to="/login" />} />
 
-        <Route path="/email-verified" element={EmailVerified} />
+        <Route path="/email-verified" element={<EmailVerified />} />
 
       </Routes>
     </Router>

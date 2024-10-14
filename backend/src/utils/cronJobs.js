@@ -6,6 +6,7 @@ import { User } from "../models/user.model.js";
 const removeOldUnverifiedUsers = async () => {
   const cutoff = new Date(Date.now() - 60 * 1000); // 1 minute ago
   const {acknowledged, deletedCount} = await User.deleteMany({ isVerified: false, createdAt: { $lt: cutoff } });
+  console.log(acknowledged, deletedCount);
   if(acknowledged){
       console.log(`${deletedCount} Unverified users older than 1 minutes have been deleted`);
   }

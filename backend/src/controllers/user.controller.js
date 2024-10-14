@@ -161,8 +161,8 @@ const verifyUser = asyncHandler(async (req, res) => {
 
     await Token.findByIdAndDelete({_id: id});
 
-    res.redirect("/email-verified");
-    
+    res.redirect("http://localhost:5173/email-verified");
+
 });
 
 //reset password

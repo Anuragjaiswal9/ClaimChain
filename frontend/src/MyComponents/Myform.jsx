@@ -1,32 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs, Tab, Input, Link, Button, Card, CardBody } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
-import axios from 'axios'
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setFullName } from '../features/Users/UserSlice';
 
-function Myform({ setIsAuthenticated }) {
+function Myform({ }) {
+
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
 
   const handleLogin = () => {
-    // Perform login logic here (e.g., API call for authentication)
-    // If login is successful:
-    setIsAuthenticated(true);
+    //setIsAuthenticated(true);
     navigate('/main'); // Redirect to the main page after login
   };
 
+  // Separate useForm for login and sign-up
+  const loginForm = useForm();
+  const signUpForm = useForm();
 
+  // Login form submission
+  async function onLoginSubmit(data) {
+    const response = await axios.post("http://localhost:8000/api/v1/users/login", data);
+    console.log(response.data.data.user.fullName);
+    dispatch(setFullName(response.data.data.user.fullName));
+    handleLogin();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm();
+  }
 
+  // Sign-up form submission
   async function onSubmit(data) {
-    await axios.post("http://localhost:8000/api/v1/users/register", data)
-    console.log(data)
+    try {
+      const response = await axios.post("http://localhost:8000/api/v1/users/register", data);
+      console.log(response.data);  // Check the response from the API
+    } catch (error) {
+      console.error("Sign-up failed:", error);
+      // Optionally, display error to the user
+    }
   }
 
   const [selected, setSelected] = React.useState("login");
@@ -44,23 +57,26 @@ function Myform({ setIsAuthenticated }) {
           >
             {/* Login Tab */}
             <Tab key="login" title="Login">
-              <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+              <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="flex flex-col gap-4">
                 <Input
                   placeholder="Enter your email"
-                  {...register('email', {
+                  {...loginForm.register('email', {
                     required: 'Email is required',
                     pattern: {
-                      value: /^it\d{5}@glbitm\.ac\.in$/,
-                      message: 'Enter a valid glbitm.ac.in email (e.g., it2331@glbitm.ac.in)',
+                      value: /^(it|csai|csds|cse|csews|csd|csepmsss|csefw|csaifw|itfw|csdsfw|csaiml|aids|csd|csdews|csh)\d{5}@glbitm\.ac\.in$/,
+                      message: 'Enter a valid glbitm.ac.in email (e.g., it23331@glbitm.ac.in)',
                     },
                   })}
                 />
-                {errors.email && <p className='text-red-600'>{errors.email.message}</p>}
+                {/* Safely check if errors exist before accessing them */}
+                {loginForm.formState.errors?.email && (
+                  <p className='text-red-600'>{loginForm.formState.errors.email.message}</p>
+                )}
 
                 <Input
                   type="password"
                   placeholder="Enter your password"
-                  {...register('password', {
+                  {...loginForm.register('password', {
                     required: 'Password is required',
                     minLength: {
                       value: 8,
@@ -72,7 +88,9 @@ function Myform({ setIsAuthenticated }) {
                     },
                   })}
                 />
-                {errors.password && <p className='text-red-600'>{errors.password.message}</p>}
+                {loginForm.formState.errors?.password && (
+                  <p className='text-red-600'>{loginForm.formState.errors.password.message}</p>
+                )}
 
                 <p className="text-center text-small">
                   Need to create an account?{" "}
@@ -81,8 +99,8 @@ function Myform({ setIsAuthenticated }) {
                   </Link>
                 </p>
                 <div className="flex gap-2 justify-end">
-                  <Button fullWidth color="success" type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? 'Logging in...' : 'Login'}
+                  <Button fullWidth color="success" type="submit" disabled={loginForm.formState.isSubmitting}>
+                    {loginForm.formState.isSubmitting ? 'Logging in...' : 'Login'}
                   </Button>
                 </div>
               </form>
@@ -90,32 +108,36 @@ function Myform({ setIsAuthenticated }) {
 
             {/* Sign-up Tab */}
             <Tab key="sign-up" title="Sign up">
-              <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 h-[300px]">
+              <form onSubmit={signUpForm.handleSubmit(onSubmit)} className="flex flex-col gap-4 h-[300px]">
                 <Input
                   label="Name"
                   placeholder="Enter your name"
-                  {...register('fullName', { required: 'Name is required' })}
+                  {...signUpForm.register('fullName', { required: 'Name is required' })}
                 />
-                {errors.name && <p className='text-red-600'>{errors.name.message}</p>}
+                {signUpForm.formState.errors?.fullName && (
+                  <p className='text-red-600'>{signUpForm.formState.errors.fullName.message}</p>
+                )}
 
                 <Input
                   label="Email"
                   placeholder="Enter your email"
-                  {...register('email', {
+                  {...signUpForm.register('email', {
                     required: 'Email is required',
                     pattern: {
-                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                      value: /^(it|csai|csds|cse|csews|csd|csepmsss|csefw|csaifw|itfw|csdsfw|csaiml|aids|csd|csdews|csh)\d{5}@glbitm\.ac\.in$/,
                       message: 'Enter a valid email',
                     },
                   })}
                 />
-                {errors.email && <p className='text-red-600'>{errors.email.message}</p>}
+                {signUpForm.formState.errors?.email && (
+                  <p className='text-red-600'>{signUpForm.formState.errors.email.message}</p>
+                )}
 
                 <Input
                   label="Password"
                   type="password"
                   placeholder="Enter your password"
-                  {...register('password', {
+                  {...signUpForm.register('password', {
                     required: 'Password is required',
                     minLength: {
                       value: 8,
@@ -127,7 +149,9 @@ function Myform({ setIsAuthenticated }) {
                     },
                   })}
                 />
-                {errors.password && <p className='text-red-600'>{errors.password.message}</p>}
+                {signUpForm.formState.errors?.password && (
+                  <p className='text-red-600'>{signUpForm.formState.errors.password.message}</p>
+                )}
 
                 <p className="text-center text-small">
                   Already have an account?{" "}
@@ -136,8 +160,8 @@ function Myform({ setIsAuthenticated }) {
                   </Link>
                 </p>
                 <div className="flex gap-2 justify-end">
-                  <Button fullWidth color="success" type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? 'Signing up...' : 'Sign up'}
+                  <Button fullWidth color="success" type="submit" disabled={signUpForm.formState.isSubmitting}>
+                    {signUpForm.formState.isSubmitting ? 'Signing up...' : 'Sign up'}
                   </Button>
                 </div>
               </form>

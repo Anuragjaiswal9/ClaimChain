@@ -24,6 +24,12 @@ function MyNavbar() {
       
       navigate('/');  // Navigate to the logout page
     }
+    if (action === 'settings') {
+      // Perform logout-related tasks here if necessary
+      // For example: clear session, authentication, etc.
+      
+      navigate('/Edit');  // Navigate to the logout page
+    }
   }, [action, navigate]);
 
   return (

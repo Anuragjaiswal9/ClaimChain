@@ -3,6 +3,7 @@ import Login from "./MyComponents/Login";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import Mainpage from "./MyComponents/MainPage";
 import EmailVerified from "./components/redirecting/email-verified";
+import EditProfile from "./MyComponents/EditProfile";
 
 
 
@@ -33,6 +34,12 @@ function App() {
         <Route path="*" element={<Navigate to="/login" />} />
 
         <Route path="/email-verified" element={<EmailVerified />} />
+
+        <Route
+          path="/Edit"
+          element={<EditProfile/>}
+        />
+
 
       </Routes>
     </Router>

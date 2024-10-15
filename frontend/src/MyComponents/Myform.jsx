@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Tabs, Tab, Input, Link, Button, Card, CardBody } from "@nextui-org/react";
-import { useForm  } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux'; 
-import { setFullName } from '../features/Users/UserSlice'; 
+import { useDispatch } from 'react-redux';
+import { setFullName } from '../features/Users/UserSlice';
 
-function Myform({  }) {
+function Myform({ }) {
 
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
-  
+
 
   const handleLogin = () => {
     //setIsAuthenticated(true);
@@ -24,9 +24,9 @@ function Myform({  }) {
 
   // Login form submission
   async function onLoginSubmit(data) {
-  const response =   await axios.post("http://localhost:8000/api/v1/users/login", data);
-    console.log(response.data.data.user.fullName); 
-    dispatch(setFullName(response.data.data.user.fullName)); 
+    const response = await axios.post("http://localhost:8000/api/v1/users/login", data);
+    console.log(response.data.data.user.fullName);
+    dispatch(setFullName(response.data.data.user.fullName));
     handleLogin();
 
   }
@@ -63,7 +63,7 @@ function Myform({  }) {
                   {...loginForm.register('email', {
                     required: 'Email is required',
                     pattern: {
-                      value: /^it\d{5}@glbitm\.ac\.in$/,
+                      value: /^(it|csai|csds|cse|csews|csd|csepmsss|csefw|csaifw|itfw|csdsfw|csaiml|aids|csd|csdews|csh)\d{5}@glbitm\.ac\.in$/,
                       message: 'Enter a valid glbitm.ac.in email (e.g., it23331@glbitm.ac.in)',
                     },
                   })}
@@ -124,7 +124,7 @@ function Myform({  }) {
                   {...signUpForm.register('email', {
                     required: 'Email is required',
                     pattern: {
-                      value: /^it\d{5}@glbitm\.ac\.in$/,
+                      value: /^(it|csai|csds|cse|csews|csd|csepmsss|csefw|csaifw|itfw|csdsfw|csaiml|aids|csd|csdews|csh)\d{5}@glbitm\.ac\.in$/,
                       message: 'Enter a valid email',
                     },
                   })}

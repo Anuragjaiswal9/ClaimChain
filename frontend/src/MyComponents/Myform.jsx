@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setFullName } from '../features/Users/UserSlice';
+import { setFullName , setEmail } from '../features/Users/UserSlice';
 
 function Myform({ }) {
 
@@ -16,6 +16,11 @@ function Myform({ }) {
   const handleLogin = () => {
     //setIsAuthenticated(true);
     navigate('/main'); // Redirect to the main page after login
+  };
+
+  const handleSign = () => {
+    //setIsAuthenticated(true);
+    navigate('/Verify-Email'); // Redirect to the main page after login
   };
 
   // Separate useForm for login and sign-up
@@ -35,7 +40,8 @@ function Myform({ }) {
   async function onSubmit(data) {
     try {
       const response = await axios.post("http://localhost:8000/api/v1/users/register", data);
-      console.log(response.data);  // Check the response from the API
+      handleSign();
+      dispatch(setEmail(response.data.data.email));  // Check the response from the API
     } catch (error) {
       console.error("Sign-up failed:", error);
       // Optionally, display error to the user

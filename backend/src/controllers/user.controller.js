@@ -152,7 +152,7 @@ const verifyUser = asyncHandler(async (req, res) => {
     
     await User.updateOne({ _id: id }, { isVerified: true });
 
-    res.redirect("http://localhost:5173/email-verified");
+    res.redirect("http://localhost:5173/Email-Verified");
 
 });
 

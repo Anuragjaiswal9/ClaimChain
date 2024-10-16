@@ -15,7 +15,7 @@ function Login() {
             <div className="w-1/2 h-32  max-sm:w-full   max-sm:h-12 flex justify-center items-center max-sm:mb-5 ">
                 <img
                     src="ClaimLogo.png"
-                    className=" max-sm:w-60 sm:w-80 mt-10 max-sm:h-14  max-sm:mt-5 left-0 top-0"
+                    className=" max-sm:w-48 sm:w-80  mt-10 max-sm:h-10  max-sm:mt-5 left-0 top-0"
                 />
             </div>
 

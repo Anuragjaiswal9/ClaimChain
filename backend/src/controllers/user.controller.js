@@ -114,7 +114,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
 });
 
-const logoutUser = asyncHandler( async(req, res) => {
+const logoutUser = asyncHandler(async(req, res) => {
     await User.findByIdAndUpdate(
         req.body._id,
     {
@@ -156,6 +156,19 @@ const verifyUser = asyncHandler(async (req, res) => {
 
 });
 
+const getCurrentUser = asyncHandler(async (req, res) => {
+    const user = req.user;
+    if(!user){
+        throw new ApiError(404, "USer doesnot exists");
+    }
+    return res.status(200).json(new ApiResponse(200, user, "User data sent successfully"));
+})
+
+const updateUserDetails = asyncHandler(async (req, res) => {
+    
+
+})
+
 //reset password
 
-export { registerUser, verifyUser, loginUser, logoutUser };
+export { registerUser, verifyUser, loginUser, logoutUser, getCurrentUser };

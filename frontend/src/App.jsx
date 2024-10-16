@@ -7,6 +7,7 @@ import EditProfile from "./MyComponents/EditProfile";
 import VerificationComp from "./MyComponents/VerificationComp";
 import ForgotPassword from "./MyComponents/ForgotPassword";
 import ResetPassword from "./MyComponents/ResetPassword";
+import ReportItem from "./MyComponents/ReportItem";
 
 
 
@@ -53,6 +54,11 @@ function App() {
         <Route
           path="/Reset-Password"
           element={<ResetPassword />}
+        />
+
+        <Route
+          path="/Report-Item"
+          element={<ReportItem/>}
         />
 
 

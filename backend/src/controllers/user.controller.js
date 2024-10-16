@@ -184,60 +184,50 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 });
 
 const updateUserDetails = asyncHandler(async (req, res) => {
-    const user = req.user;
-    if (!user) {
-      throw new ApiError(404, "User does not exist");
-    }
-  
-    const fullName = req?.body?.fullName;
-    const avatarLocalPath = req?.files?.avatar?.[0]?.path;
-  
-    if (!fullName && !avatarLocalPath) {
-      return res.status(400).json(
-        new ApiResponse(400, null, "Nothing to change")
-      );
-    }
+  const user = req.user;
 
-    
+  // Check if user exists
+  if (!user) {
+    throw new ApiError(404, "User does not exist");
+  }
 
-    const updateFields = {};
-    if (fullName) updateFields.fullName = fullName;
-    if (avatar) updateFields.avatar = avatar.url;
-
-    const updatedUser = await User.findByIdAndUpdate(
-      user._id,
-      { $set: {fullName: fullName} },
-      { new: true } 
-    ).select("-password -refreshToken");
+  const fullName = req?.body?.fullName;
   
-    res.status(200).json(
-      new ApiResponse(200, updatedUser, "User details updated successfully")
+  // Ensure avatar files exist before accessing the array index
+  const avatarLocalPath = req?.files?.avatar?.length > 0 ? req.files.avatar[0].path : null;
+
+  // Check if there's anything to update
+  if (!fullName && !avatarLocalPath) {
+    return res.status(400).json(
+      new ApiResponse(400, null, "Nothing to change")
     );
-  });
+  }
 
-const updateUserProfile = asyncHandler(async (req, res) => {
-    const user = req.user;
-    if (!user) {
-      throw new ApiError(404, "User does not exist");
-    }
+  console.log(avatarLocalPath)
 
-    const avatarLocalPath = req?.files?.avatar?.[0]?.path;
-  
-    if (!avatarLocalPath) {
-      return res.status(400).json(
-        new ApiResponse(400, null, "Nothing to change")
-      );
-    }
+  let avatar;
+  if (avatarLocalPath) {
+    // If avatar is provided, upload it to Cloudinary
+    avatar = await uploadOnCloudinary(avatarLocalPath);
+  }
+  console.log(avatar);
 
-    console.log(avatarLocalPath); // public\temp\avatar-1729103981345-967772249
-  
-    let avatar;
-    if (avatarLocalPath) {
-      avatar = await uploadOnCloudinary(avatarLocalPath);
-    }
-    console.log(avatar); //null
-})
-  
+  // Object to store update fields
+  const updateFields = {};
+  if (fullName) updateFields.fullName = fullName;
+  if (avatar) updateFields.avatar = avatar.url;
+
+  // Update only if there are fields to update
+  const updatedUser = await User.findByIdAndUpdate(
+    user._id,
+    { $set: updateFields },
+    { new: true } // Return the updated document
+  ).select("-password -refreshToken");
+
+  res.status(200).json(
+    new ApiResponse(200, updatedUser, "User details updated successfully")
+  );
+});
 
 const updatePassword = asyncHandler(async (req, res) => {
     const { oldPassword, newPassword } = req.body;

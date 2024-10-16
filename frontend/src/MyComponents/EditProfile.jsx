@@ -34,17 +34,18 @@ export default function EditProfile() {
         }
     }
 
-    const onSubmitUsername = (data) => {
-        console.log("Username Data: ", { username: data.username })
+    const onSubmitUsername =async (data) => {
+        console.log("Username Data: ", { username: data.fullName })
+        await axios.post("http://localhost:8000/api/v1/users/user/update-profile", {fullName: data.fullName}, {withCredentials: true});
         // Handle the username update, e.g., send to the backend
         setEditingUsername(false)
-        reset({ username: data.username }) // Optionally reset the form with the updated username
+        reset({ username: data.fullName }) // Optionally reset the form with the updated username
     }
 
     const onSubmitPassword = async() => {
         const { oldPassword, newPassword, confirmPassword } = getValues()
         console.log("Password Data: ", { oldPassword, newPassword, confirmPassword })
-        await axios.post("http://localhost:8000/api/v1/users/user/update-profile/password", {oldPassword, newPassword});
+        await axios.post("http://localhost:8000/api/v1/users/user/update-profile/password", {oldPassword, newPassword}, {withCredentials: true});
         // Handle the password change, e.g., send only password data to the backend
         setChangingPassword(false)
     }
@@ -99,7 +100,7 @@ export default function EditProfile() {
                                     <form onSubmit={handleSubmit(onSubmitUsername)} className="space-y-4">
                                         <Input
                                             id="username"
-                                            {...register("username", { required: "Username is required" })}
+                                            {...register("fullName", { required: "Username is required" })}
                                         />
                                         {errors.username && (
                                             <p className="text-sm text-danger">{errors.username.message}</p>

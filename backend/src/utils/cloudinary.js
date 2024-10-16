@@ -17,16 +17,17 @@ const uploadOnCloudinary = async (localFilePath) => {
     if (!localFilePath) return null;
     const response = await cloudinary.uploader.upload(localFilePath, {
       transformation: [
-        { aspect_ratio: "1:1", gravity: "auto", width: 500, crop: "scale" },
+        { gravity: "face", height: 200, width: 200, crop: "thumb" },
         { quality: "auto" },
-        { fetch_format: "auto" },
         { radius: "max" },
+        { fetch_format: "auto" },
       ],
-      resource_type: "image",
-    });    
+      resource_type: "auto",
+    });
     fs.unlinkSync(localFilePath);
     return response;
   } catch (error) {
+    console.error("Upload failed:", error);
     fs.unlinkSync(localFilePath);
     return null;
   }

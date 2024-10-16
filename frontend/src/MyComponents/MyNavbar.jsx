@@ -5,6 +5,7 @@ import { SearchIcon } from './SearchIcon';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux'; 
 import { selectFullName } from '../features/Users/UserSlice'; 
+import axios from 'axios';
 
 function MyNavbar() {
   const [navAction, setNavAction] = useState(null);  // State to track navigation action
@@ -13,6 +14,16 @@ function MyNavbar() {
 
   // Effect to handle navigation actions
   useEffect(() => {
+
+    const handleLogout = async () => {
+      try {
+        await axios.post("http://localhost:8000/api/v1/users/user/logout", {}, { withCredentials: true });
+        navigate('/');  // Navigate to logout or home page
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     if (navAction === 'Home') {
       navigate('/main');  // Navigate to Home page
     } else if (navAction === 'Lost') {
@@ -20,7 +31,7 @@ function MyNavbar() {
     } else if (navAction === 'Found') {
       navigate('/found');  // Example page for 'Found'
     } else if (navAction === 'logout') {
-      navigate('/');  // Navigate to logout or home page
+      handleLogout(); // Call the async logout function
     } else if (navAction === 'settings') {
       navigate('/Edit');  // Navigate to the settings page
     }

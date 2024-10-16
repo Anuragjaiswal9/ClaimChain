@@ -7,7 +7,10 @@ const app = express();
 
 startCronJobs(); // this function deletes unverified users every minutes automatically
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true, // Allow cookies to be sent
+  }));
 
 app.use(express.json());
 

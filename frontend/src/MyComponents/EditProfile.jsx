@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import MyNavbar from "./MyNavbar"
 import { useSelector } from 'react-redux'; 
 import { selectFullName } from '../features/Users/UserSlice'; 
+import axios from "axios"
 
 
 export default function EditProfile() {
@@ -40,9 +41,10 @@ export default function EditProfile() {
         reset({ username: data.username }) // Optionally reset the form with the updated username
     }
 
-    const onSubmitPassword = () => {
-        const { currentPassword, newPassword, confirmPassword } = getValues()
-        console.log("Password Data: ", { currentPassword, newPassword, confirmPassword })
+    const onSubmitPassword = async() => {
+        const { oldPassword, newPassword, confirmPassword } = getValues()
+        console.log("Password Data: ", { oldPassword, newPassword, confirmPassword })
+        await axios.post("http://localhost:8000/api/v1/users/user/update-profile/password", {oldPassword, newPassword});
         // Handle the password change, e.g., send only password data to the backend
         setChangingPassword(false)
     }
@@ -143,7 +145,7 @@ export default function EditProfile() {
                                             <Input
                                                 id="current-password"
                                                 type="password"
-                                                {...register("currentPassword", { required: "Current password is required" })}
+                                                {...register("oldPassword", { required: "Current password is required" })}
                                             />
                                             {errors.currentPassword && (
                                                 <p className="text-sm text-danger">{errors.currentPassword.message}</p>

@@ -29,8 +29,8 @@ function Myform({ }) {
 
   // Login form submission
   async function onLoginSubmit(data) {
-    const response = await axios.post("http://localhost:8000/api/v1/users/login", data);
-    console.log(response.data.data.user.fullName);
+    const response = await axios.post("http://localhost:8000/api/v1/users/login", data, {withCredentials: true});
+    console.log(response);
     dispatch(setFullName(response.data.data.user.fullName));
     handleLogin();
 

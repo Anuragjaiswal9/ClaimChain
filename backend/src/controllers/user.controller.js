@@ -110,7 +110,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: true,
+    secure: false,
   };
 
   return res
@@ -145,7 +145,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: true,
+    secure: false,
   };
 
   return res
@@ -197,12 +197,8 @@ const updateUserDetails = asyncHandler(async (req, res) => {
         new ApiResponse(400, null, "Nothing to change")
       );
     }
-  
-    let avatar;
-    if (avatarLocalPath) {
-      avatar = await uploadOnCloudinary(avatarLocalPath);
-    }
-    console.log(avatar);
+
+    
 
     const updateFields = {};
     if (fullName) updateFields.fullName = fullName;
@@ -210,7 +206,7 @@ const updateUserDetails = asyncHandler(async (req, res) => {
 
     const updatedUser = await User.findByIdAndUpdate(
       user._id,
-      { $set: updateFields },
+      { $set: {fullName: fullName} },
       { new: true } 
     ).select("-password -refreshToken");
   
@@ -218,6 +214,29 @@ const updateUserDetails = asyncHandler(async (req, res) => {
       new ApiResponse(200, updatedUser, "User details updated successfully")
     );
   });
+
+const updateUserProfile = asyncHandler(async (req, res) => {
+    const user = req.user;
+    if (!user) {
+      throw new ApiError(404, "User does not exist");
+    }
+
+    const avatarLocalPath = req?.files?.avatar?.[0]?.path;
+  
+    if (!avatarLocalPath) {
+      return res.status(400).json(
+        new ApiResponse(400, null, "Nothing to change")
+      );
+    }
+
+    console.log(avatarLocalPath); // public\temp\avatar-1729103981345-967772249
+  
+    let avatar;
+    if (avatarLocalPath) {
+      avatar = await uploadOnCloudinary(avatarLocalPath);
+    }
+    console.log(avatar); //null
+})
   
 
 const updatePassword = asyncHandler(async (req, res) => {

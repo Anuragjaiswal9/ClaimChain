@@ -5,6 +5,8 @@ import Mainpage from "./MyComponents/MainPage";
 import EmailVerified from "./components/redirecting/email-verified";
 import EditProfile from "./MyComponents/EditProfile";
 import VerificationComp from "./MyComponents/VerificationComp";
+import ForgotPassword from "./MyComponents/ForgotPassword";
+import ResetPassword from "./MyComponents/ResetPassword";
 
 
 
@@ -27,20 +29,30 @@ function App() {
         {/* Main Page Route: Redirect to login if not authenticated {isAuthenticated ? <MainPage/> : <Navigate to="/login" />} */}
         <Route
           path="/main"
-          element={<Mainpage/>}
+          element={<Mainpage />}
         />
 
-        {/* Default Route: Redirect to Login <Route path="*" element={<Navigate to="/login" />} /> */ }
-        
+        {/* Default Route: Redirect to Login <Route path="*" element={<Navigate to="/login" />} /> */}
+
         <Route path="*" element={<Navigate to="/login" />} />
 
         <Route path="/Verify-Email" element={<EmailVerified />} />
 
-        <Route path="/Email-Verified" element={<VerificationComp/>} />
+        <Route path="/Email-Verified" element={<VerificationComp />} />
 
         <Route
           path="/Edit"
-          element={<EditProfile/>}
+          element={<EditProfile />}
+        />
+
+        <Route
+          path="/Forgot-Password"
+          element={<ForgotPassword />}
+        />
+
+        <Route
+          path="/Reset-Password"
+          element={<ResetPassword />}
         />
 
 

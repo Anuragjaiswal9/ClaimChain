@@ -7,27 +7,30 @@ import { useSelector } from 'react-redux';
 import { selectFullName } from '../features/Users/UserSlice'; 
 
 function MyNavbar() {
-  const [action, setAction] = useState(null);  // State to track which dropdown item is clicked
+  const [navAction, setNavAction] = useState(null);  // State to track navigation action
   const navigate = useNavigate();
   const fullName = useSelector(selectFullName);
 
-  
-
-  const handleDropdownAction = (key) => {
-    setAction(key);  // Set the clicked action
-  };
-
+  // Effect to handle navigation actions
   useEffect(() => {
-    if (action === 'logout') {
-      // Perform logout-related tasks here if necessary
-      // For example: clear session, authentication, etc.
-      
-      navigate('/');  // Navigate to the logout page
+    if (navAction === 'Home') {
+      navigate('/main');  // Navigate to Home page
+    } else if (navAction === 'Lost') {
+      navigate('/lost');  // Example page for 'Lost'
+    } else if (navAction === 'Found') {
+      navigate('/found');  // Example page for 'Found'
+    } else if (navAction === 'logout') {
+      navigate('/');  // Navigate to logout or home page
+    } else if (navAction === 'settings') {
+      navigate('/Edit');  // Navigate to the settings page
     }
-  }, [action, navigate]);
+
+    // Clear action after navigating to avoid unnecessary re-trigger
+    setNavAction(null);
+  }, [navAction, navigate]);
 
   return (
-    <Navbar className=''>
+    <Navbar>
       <NavbarContent>
         <NavbarBrand>
           <Logo />
@@ -36,17 +39,21 @@ function MyNavbar() {
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
-          <Link color="foreground" href="#">
+          <Link
+            color="foreground"
+            href="#"
+            onClick={() => setNavAction('Home')}  // Set the action to 'Home'
+          >
             Home
           </Link>
         </NavbarItem>
-        <NavbarItem isActive>
-          <Link href="#" aria-current="page">
+        <NavbarItem>
+          <Link href="#" aria-current="page" onClick={() => setNavAction('Lost')}>
             Lost
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="#">
+          <Link color="foreground" href="#" onClick={() => setNavAction('Found')}>
             Found
           </Link>
         </NavbarItem>
@@ -78,7 +85,7 @@ function MyNavbar() {
               src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
             />
           </DropdownTrigger>
-          <DropdownMenu aria-label="Profile Actions" variant="flat" onAction={handleDropdownAction}>
+          <DropdownMenu aria-label="Profile Actions" variant="flat" onAction={(key) => setNavAction(key)}>
             <DropdownItem key="profile" className="h-14 gap-2">
               <p className="font-semibold">Signed in as</p>
               <p className="text-sky-500">{fullName}</p>

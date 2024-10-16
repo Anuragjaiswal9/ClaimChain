@@ -3,6 +3,8 @@ import Login from "./MyComponents/Login";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import Mainpage from "./MyComponents/MainPage";
 import EmailVerified from "./components/redirecting/email-verified";
+import EditProfile from "./MyComponents/EditProfile";
+import VerificationComp from "./MyComponents/VerificationComp";
 
 
 
@@ -32,7 +34,15 @@ function App() {
         
         <Route path="*" element={<Navigate to="/login" />} />
 
-        <Route path="/email-verified" element={<EmailVerified />} />
+        <Route path="/Verify-Email" element={<EmailVerified />} />
+
+        <Route path="/Email-Verified" element={<VerificationComp/>} />
+
+        <Route
+          path="/Edit"
+          element={<EditProfile/>}
+        />
+
 
       </Routes>
     </Router>

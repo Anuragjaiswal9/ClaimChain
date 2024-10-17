@@ -38,6 +38,7 @@ function Myform({ }) {
   async function onLoginSubmit(data) {
     const response = await axios.post("http://localhost:8000/api/v1/users/login", data, { withCredentials: true });
     console.log(response);
+    localStorage.setItem("refreshToken", response.data.data.refreshToken );
     dispatch(setFullName(response.data.data.user.fullName));
     handleLogin();
 

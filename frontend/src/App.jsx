@@ -8,6 +8,7 @@ import VerificationComp from "./MyComponents/VerificationComp";
 import ForgotPassword from "./MyComponents/ForgotPassword";
 import ResetPassword from "./MyComponents/ResetPassword";
 import ReportItem from "./MyComponents/ReportItem";
+import ProtectedRoute from "./MyComponents/ProtectedRoute";
 
 
 
@@ -30,7 +31,7 @@ function App() {
         {/* Main Page Route: Redirect to login if not authenticated {isAuthenticated ? <MainPage/> : <Navigate to="/login" />} */}
         <Route
           path="/Home"
-          element={<Mainpage />}
+          element={<ProtectedRoute><Mainpage /></ProtectedRoute>}
         />
 
         {/* Default Route: Redirect to Login <Route path="*" element={<Navigate to="/login" />} /> */}
@@ -43,7 +44,7 @@ function App() {
 
         <Route
           path="/Edit"
-          element={<EditProfile />}
+          element={<ProtectedRoute><EditProfile /></ProtectedRoute>}
         />
 
         <Route
@@ -58,7 +59,7 @@ function App() {
 
         <Route
           path="/Report-Item"
-          element={<ReportItem/>}
+          element={<ProtectedRoute><ReportItem/></ProtectedRoute>}
         />
 
 

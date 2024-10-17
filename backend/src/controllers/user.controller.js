@@ -254,6 +254,29 @@ const updatePassword = asyncHandler(async (req, res) => {
     res.status(200).json(new ApiResponse(200, {}, "User Password Updated Successfully"))
 });
 
+const verifyRefreshToken = asyncHandler(async( req, res) => {
+  const token = req.header("Authorization")?.replace("Bearer ", "");
+  if(!token){
+    throw new ApiError(401, "unauthorized access");
+  }
+
+  
+  const decodedToken = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+  
+  const user = await User.findById(decodedToken._id).select("-password");
+
+  if(!user){
+    throw new ApiError(404, "User does not exists")
+  }
+  
+  if(token !== user.refreshToken){
+    throw new ApiError(401, "Unauthorized access to user");
+  }
+
+  res.status(200).json(new ApiResponse(200, user, "RefreshToken verified successfully"))
+
+})
+
 export {
   registerUser,
   verifyUser,
@@ -262,5 +285,6 @@ export {
   logoutUser,
   getCurrentUser,
   updateUserDetails,
-  updatePassword
+  updatePassword,
+  verifyRefreshToken
 };

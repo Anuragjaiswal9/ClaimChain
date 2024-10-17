@@ -16,7 +16,7 @@ import ReportItem from "./MyComponents/ReportItem";
 
 function App() {
 
-  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+
 
 
 
@@ -25,11 +25,11 @@ function App() {
       <Routes>
 
         {/* Login Page Route */}
-        <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+        <Route path="/" element={<Login />} />
 
         {/* Main Page Route: Redirect to login if not authenticated {isAuthenticated ? <MainPage/> : <Navigate to="/login" />} */}
         <Route
-          path="/main"
+          path="/Home"
           element={<Mainpage />}
         />
 
@@ -68,3 +68,10 @@ function App() {
 }
 
 export default App;
+
+
+
+
+
+
+

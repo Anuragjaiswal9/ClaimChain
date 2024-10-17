@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setFullName , setEmail } from '../features/Users/UserSlice';
+import { setFullName, setEmail } from '../features/Users/UserSlice';
 
 function Myform({ }) {
 
@@ -14,13 +14,20 @@ function Myform({ }) {
 
 
   const handleLogin = () => {
-    //setIsAuthenticated(true);
-    navigate('/main'); // Redirect to the main page after login
+   
+    navigate('/Home'); // Redirect to the main page after login
   };
 
   const handleSign = () => {
-    //setIsAuthenticated(true);
+    
     navigate('/Verify-Email'); // Redirect to the main page after login
+  };
+
+  const handleForgotPassword = () =>
+  {
+    
+    navigate('/forgot-password')
+
   };
 
   // Separate useForm for login and sign-up
@@ -29,7 +36,7 @@ function Myform({ }) {
 
   // Login form submission
   async function onLoginSubmit(data) {
-    const response = await axios.post("http://localhost:8000/api/v1/users/login", data, {withCredentials: true});
+    const response = await axios.post("http://localhost:8000/api/v1/users/login", data, { withCredentials: true });
     console.log(response);
     dispatch(setFullName(response.data.data.user.fullName));
     handleLogin();
@@ -104,13 +111,20 @@ function Myform({ }) {
                     Sign up
                   </Link>
                 </p>
+
                 <div className="flex gap-2 justify-end">
                   <Button fullWidth color="success" type="submit" disabled={loginForm.formState.isSubmitting}>
                     {loginForm.formState.isSubmitting ? 'Logging in...' : 'Login'}
                   </Button>
                 </div>
+                <p className="text-center text-small mt-2">
+                  <Link onClick={handleForgotPassword} className='text-red-600 cursor-pointer hover:text-red-700'>Forgot Password?</Link>
+                </p>
+
               </form>
             </Tab>
+
+
 
             {/* Sign-up Tab */}
             <Tab key="sign-up" title="Sign up">

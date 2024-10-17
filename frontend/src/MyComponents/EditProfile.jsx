@@ -10,8 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { CameraIcon, User } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import MyNavbar from "./MyNavbar"
-import { useSelector } from 'react-redux'; 
-import { selectFullName } from '../features/Users/UserSlice'; 
+import { useSelector } from 'react-redux';
+import { selectFullName } from '../features/Users/UserSlice';
 import axios from "axios"
 
 
@@ -23,29 +23,49 @@ export default function EditProfile() {
 
     const fullName = useSelector(selectFullName);
 
-    const handleFileChange = (event) => {
-        const file = event.target.files?.[0]
-        if (file) {
-            const reader = new FileReader()
-            reader.onload = (e) => {
-                setAvatar(e.target?.result)
-            }
-            reader.readAsDataURL(file)
-        }
-    }
+    const handleFileChange = async (event) => {
+        const file = event.target.files?.[0];
 
-    const onSubmitUsername =async (data) => {
+        if (file) {
+            // Create FormData object to store the file
+            const formData = new FormData();
+            formData.append("avatar", file);
+
+            try {
+                // Post request to upload the file
+                const response = await axios.post("http://localhost:8000/api/v1/users/user/update-profile", formData, {
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+                setAvatar(response.data.data.avatar)
+
+                console.log("File uploaded successfully", response.data);
+            } catch (error) {
+                console.error("Error uploading file", error);
+            }
+        }
+    };
+
+
+
+
+
+
+    const onSubmitUsername = async (data) => {
         console.log("Username Data: ", { username: data.fullName })
-        await axios.post("http://localhost:8000/api/v1/users/user/update-profile", {fullName: data.fullName}, {withCredentials: true});
+        await axios.post("http://localhost:8000/api/v1/users/user/update-profile", { fullName: data.fullName }, { withCredentials: true });
         // Handle the username update, e.g., send to the backend
         setEditingUsername(false)
         reset({ username: data.fullName }) // Optionally reset the form with the updated username
     }
 
-    const onSubmitPassword = async() => {
+    const onSubmitPassword = async () => {
         const { oldPassword, newPassword, confirmPassword } = getValues()
         console.log("Password Data: ", { oldPassword, newPassword, confirmPassword })
-        await axios.post("http://localhost:8000/api/v1/users/user/update-profile/password", {oldPassword, newPassword}, {withCredentials: true});
+        await axios.post("http://localhost:8000/api/v1/users/user/update-profile/password", { oldPassword, newPassword }, { withCredentials: true });
         // Handle the password change, e.g., send only password data to the backend
         setChangingPassword(false)
     }
@@ -78,11 +98,12 @@ export default function EditProfile() {
                                 />
                                 <Label
                                     htmlFor="avatar-upload"
-                                    className="flex items-center justify-center sm:justify-start space-x-2 cursor-pointer text-sm text-primary hover:text-primary-foreground transition-colors"
+                                    className="flex items-center justify-center sm:justify-start space-x-2 cursor-pointer text-sm text-primary hover:text-blue-700 transition-colors"
                                 >
                                     <CameraIcon className="h-5 w-5" />
                                     <span>Change photo</span>
                                 </Label>
+
                                 <p className="text-xs text-muted-foreground text-center sm:text-left">
                                     At least 800x800 px recommended. <br />
                                     JPG or PNG is allowed.
@@ -90,7 +111,7 @@ export default function EditProfile() {
                             </div>
                         </div>
 
-                        
+
 
                         {/* Username Edit Section */}
                         <div className="space-y-4">
@@ -115,7 +136,7 @@ export default function EditProfile() {
                                     </form>
                                 ) : (
                                     <div className="flex items-center justify-between">
-                                        <p className="text-muted-foreground">{watch("username") || fullName }</p>
+                                        <p className="text-muted-foreground">{watch("username") || fullName}</p>
                                         <Button
                                             type="button"
                                             color="primary"

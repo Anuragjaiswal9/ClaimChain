@@ -3,8 +3,8 @@ import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Input, Dropdown, 
 import { Logo } from './Logo';
 import { SearchIcon } from './SearchIcon';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux'; 
-import { selectFullName } from '../features/Users/UserSlice'; 
+import { useSelector } from 'react-redux';
+import { selectFullName } from '../features/Users/UserSlice';
 import axios from 'axios';
 
 function MyNavbar() {
@@ -25,12 +25,11 @@ function MyNavbar() {
     };
 
     if (navAction === 'Home') {
-      navigate('/main');  // Navigate to Home page
-    } else if (navAction === 'Lost') {
-      navigate('/lost');  // Example page for 'Lost'
-    } else if (navAction === 'Found') {
-      navigate('/found');  // Example page for 'Found'
-    } else if (navAction === 'logout') {
+      navigate('/Home');  // Navigate to Home page
+    } else if (navAction === 'Report') {
+      navigate('/Report-Item');  // Example page for 'Lost'
+    }
+    else if (navAction === 'logout') {
       handleLogout(); // Call the async logout function
     } else if (navAction === 'settings') {
       navigate('/Edit');  // Navigate to the settings page
@@ -58,16 +57,13 @@ function MyNavbar() {
             Home
           </Link>
         </NavbarItem>
+
         <NavbarItem>
-          <Link href="#" aria-current="page" onClick={() => setNavAction('Lost')}>
-            Lost
+          <Link href="#" aria-current="page" onClick={() => setNavAction('Report')}>
+            Report Item
           </Link>
         </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="#" onClick={() => setNavAction('Found')}>
-            Found
-          </Link>
-        </NavbarItem>
+
       </NavbarContent>
 
       <NavbarContent as="div" className="items-center" justify="end">
@@ -102,8 +98,7 @@ function MyNavbar() {
               <p className="text-sky-500">{fullName}</p>
             </DropdownItem>
             <DropdownItem className='sm:hidden' key="Home">Home</DropdownItem>
-            <DropdownItem className='sm:hidden' key="Lost">Lost</DropdownItem>
-            <DropdownItem className='sm:hidden' key="Found">Found</DropdownItem>
+            <DropdownItem className='sm:hidden' key="Report">Report Item</DropdownItem>
             <DropdownItem key="settings">My Settings</DropdownItem>
             <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
             <DropdownItem key="logout" color="danger">

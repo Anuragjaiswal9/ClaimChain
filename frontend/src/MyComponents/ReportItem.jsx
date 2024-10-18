@@ -121,23 +121,13 @@ export default function LostFoundItemReport() {
                 <Button
                   type="button"
                   onClick={handleEditPhoto}
-                  className="mt-4 text-lg py-2 bg-slate-600 hover:bg-slate-500 transition-all duration-300"
+                  className="mt-4 text-lg py-2 bg-foreground h hover:bg-default-800 transition-all duration-300"
                 >
                   Edit Photo
                 </Button>
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="username" className="text-lg font-medium text-slate-700">User Name</Label>
-              <Input
-                id="username"
-                placeholder="Enter your name"
-                className="text-lg"
-                {...register("username", { required: true })}
-              />
-              {errors.username && <span className="text-red-500">Name is required</span>}
-            </div>
 
             <div className="space-y-2">
               <Label htmlFor="description" className="text-lg font-medium text-slate-700">Description of the Item</Label>

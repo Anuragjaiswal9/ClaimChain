@@ -4,13 +4,14 @@ import { Logo } from './Logo';
 import { SearchIcon } from './SearchIcon';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { selectFullName } from '../features/Users/UserSlice';
+import { selectFullName, selectAvatarName } from '../features/Users/UserSlice';
 import axios from 'axios';
 
 function MyNavbar() {
   const [navAction, setNavAction] = useState(null);  // State to track navigation action
   const navigate = useNavigate();
   const fullName = useSelector(selectFullName);
+  const AvatarName = useSelector(selectAvatarName);
 
   // Effect to handle navigation actions
   useEffect(() => {
@@ -47,10 +48,11 @@ function MyNavbar() {
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      <NavbarContent className="hidden sm:flex gap-6 " justify="center">
         <NavbarItem>
           <Link
             color="foreground"
+            className='text-lg'
             href="#"
             onClick={() => setNavAction('Home')}  // Set the action to 'Home'
           >
@@ -59,7 +61,7 @@ function MyNavbar() {
         </NavbarItem>
 
         <NavbarItem>
-          <Link href="#" aria-current="page" onClick={() => setNavAction('Report')}>
+          <Link href="#"  color="foreground" className='text-lg' onClick={() => setNavAction('Report')}>
             Report Item
           </Link>
         </NavbarItem>
@@ -85,11 +87,10 @@ function MyNavbar() {
             <Avatar
               isBordered
               as="button"
-              className="transition-transform"
-              color="secondary"
-              name="Jason Hughes"
-              size="sm"
-              src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+              className="max-sm:w-14 h-auto"
+              color="primary"
+              size="md"
+              src={AvatarName}
             />
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat" onAction={(key) => setNavAction(key)}>

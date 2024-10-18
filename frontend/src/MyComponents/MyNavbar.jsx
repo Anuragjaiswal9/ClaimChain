@@ -48,10 +48,11 @@ function MyNavbar() {
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      <NavbarContent className="hidden sm:flex gap-6 " justify="center">
         <NavbarItem>
           <Link
             color="foreground"
+            className='text-lg'
             href="#"
             onClick={() => setNavAction('Home')}  // Set the action to 'Home'
           >
@@ -60,7 +61,7 @@ function MyNavbar() {
         </NavbarItem>
 
         <NavbarItem>
-          <Link href="#" aria-current="page" onClick={() => setNavAction('Report')}>
+          <Link href="#"  color="foreground" className='text-lg' onClick={() => setNavAction('Report')}>
             Report Item
           </Link>
         </NavbarItem>

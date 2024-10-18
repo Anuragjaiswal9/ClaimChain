@@ -2,11 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { setFullName, setAvatarName } from '../features/Users/UserSlice';
+
+
 
 const ProtectedRoute = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({});
+  const dispatch = useDispatch();
   
   useEffect(() => {
     const checkAuth = async () => {
@@ -53,10 +58,13 @@ const ProtectedRoute = ({ children }) => {
 
   // Display a loading screen while checking authentication
   if (loading) {
-    return <div>Loading...</div>;
+    return <div></div>;
   }
   console.log(data);
   //redux data setup
+
+  dispatch(setFullName(data.data.fullName));
+  dispatch(setAvatarName(data.data.avatar));
 
   // Render protected content if authenticated, otherwise redirect to login
   return isAuthenticated ? children : <Navigate to="/" />;

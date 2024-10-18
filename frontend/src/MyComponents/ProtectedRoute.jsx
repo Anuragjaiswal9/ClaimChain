@@ -11,7 +11,6 @@ const ProtectedRoute = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       const refreshTokenFromLocalStorage = localStorage.getItem('refreshToken'); // Renamed this variable
-      console.log(refreshTokenFromLocalStorage);
 
       if (refreshTokenFromLocalStorage) {
         try {

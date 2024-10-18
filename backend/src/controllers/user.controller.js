@@ -7,6 +7,7 @@ import { sendEmail } from "../utils/nodemailer.js";
 import crypto from "crypto";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const generateAccessAndRefreshToken = async (userId) => {
   try {
@@ -255,7 +256,7 @@ const updatePassword = asyncHandler(async (req, res) => {
 });
 
 const verifyRefreshToken = asyncHandler(async( req, res) => {
-  const token = req.header("Authorization")?.replace("Bearer ", "");
+  const token = req.header("Authorization")?.replace("Bearer ", "") || req.cookies?.refreshToken;
   if(!token){
     throw new ApiError(401, "unauthorized access");
   }

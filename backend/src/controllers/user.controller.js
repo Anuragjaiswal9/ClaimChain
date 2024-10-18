@@ -27,6 +27,16 @@ const generateAccessAndRefreshToken = async (userId) => {
   }
 };
 
+const sendMail = async(userId, email, message) => {
+  const token = await Token.create({
+    _id: userId,
+    token: crypto.randomBytes(32).toString("hex"),
+  });
+
+  const sentMessage = `${message}/${userId}/${token.token}`;
+  await sendEmail(email, sentMessage);
+}
+
 const registerUser = asyncHandler(async (req, res) => {
   const { fullName, email, password } = req.body;
 
@@ -49,13 +59,8 @@ const registerUser = asyncHandler(async (req, res) => {
     password,
   });
 
-  const token = await Token.create({
-    _id: user._id,
-    token: crypto.randomBytes(32).toString("hex"),
-  });
-
-  const message = `${process.env.BASE_URL}/user/verify/${user._id}/${token.token}`;
-  await sendEmail(user.email, message);
+  const message = `${process.env.BASE_URL}/user/verify`;
+  sendMail(user._id, user.email, message);
 
   const createdUser = await User.findById(user._id).select(
     "-password -refreshToken"
@@ -157,17 +162,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 const verifyUser = asyncHandler(async (req, res) => {
-  const { id, token } = req.params;
-
-  const user = await User.findOne({ _id: id });
-  if (!user) {
-    throw new ApiError(401, "invalid link");
-  }
-
-  const verificatoinToken = await Token.findOne({ token: token });
-  if (!verificatoinToken) {
-    throw new ApiError(401, "Invalid link, Try again");
-  }
+  const id = req.id;
 
   await User.updateOne({ _id: id }, { isVerified: true });
 
@@ -276,16 +271,66 @@ const verifyRefreshToken = asyncHandler(async( req, res) => {
 
   res.status(200).json(new ApiResponse(200, user, "RefreshToken verified successfully"))
 
-})
+});
+
+const forgotPassword = asyncHandler(async(req, res) => {
+  const {email} = req.body;
+  // console.log(email);
+  const user = await User.findOne({email: email})
+  if(!user){
+    throw new ApiError(404, "User doesnot exists")
+  }
+
+  const message = `${process.env.BASE_URL}/user/forgot-password`;
+  sendMail(user._id, user.email, message);
+
+  res.status(200).send("bad request")
+});
+
+const redirectingUser = asyncHandler(async(req, res) => {
+  const id = req.id;
+
+  if(id){
+    await Token.deleteOne({_id: id})
+    res.redirect("http://localhost:5173/forgot-password");
+  } else {
+    return res.status(400).send("Bad Request: ID not found");
+  }
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const {id} = req.params;
+  const {newPassword} = req.body;
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  await User.findByIdAndUpdate(
+    id,
+    {
+      $set: {
+        password: hashedPassword
+      }
+    },
+    {
+      new: true,
+    }
+  );
+
+  res.status(200).json(new ApiResponse(200, {}, "Password reset successfull"))
+
+});
 
 export {
   registerUser,
   verifyUser,
   loginUser,
+  verifyRefreshToken,
+  forgotPassword,
+  redirectingUser,
+  resetPassword,
   //secured route methods
   logoutUser,
   getCurrentUser,
   updateUserDetails,
   updatePassword,
-  verifyRefreshToken
 };

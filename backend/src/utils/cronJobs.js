@@ -8,10 +8,10 @@ const removeOldUnverifiedUsers = async () => {
   try {
     const cutoff = new Date(Date.now() - 60 * 1000); // 1 minute ago
     const unverifiedUsers = await User.find({ isVerified: false, createdAt: { $lt: cutoff } });
-    console.log("Unverified Users:", unverifiedUsers);
+    // console.log("Unverified Users:", unverifiedUsers);
 
     const { acknowledged, deletedCount } = await User.deleteMany({ isVerified: false, createdAt: { $lt: cutoff } });
-    console.log(`${deletedCount} unverified users older than 1 minute have been deleted`);
+    // console.log(`${deletedCount} unverified users older than 1 minute have been deleted`);
 
     if (deletedCount > 0) {
       await Token.deleteMany({ userId: { $in: unverifiedUsers.map(user => user._id) } });
@@ -30,7 +30,7 @@ const scheduledTime = "* * * * *" // every minutes
 
 const job = new CronJob(scheduledTime, async () => {
   await removeOldUnverifiedUsers();
-  console.log("Job finished");
+  // console.log("Job finished");
 });
 
 export const startCronJobs = () => {

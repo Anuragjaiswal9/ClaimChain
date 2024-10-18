@@ -4,8 +4,7 @@ import { Input } from "@/components/ui/input";
 import { CreditCard, ArrowLeftRight, RefreshCcw, ShoppingCart, MessageCircle } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
-
-
+import axios from "axios";
 
 const ResetPassword = () => {
     const {
@@ -13,7 +12,9 @@ const ResetPassword = () => {
         handleSubmit,
         watch,
         formState: { errors },
-    } = useForm();
+    } = useForm({
+        mode: "onChange", // Enable real-time validation
+    });
 
     const [LoginAction, setLoginAction] = useState(null);  // State to track navigation action
     const navigate = useNavigate();
@@ -27,11 +28,18 @@ const ResetPassword = () => {
         setLoginAction(null);
     }, [LoginAction, navigate]);
 
-
-
-    const onSubmit = (data) => {
-        // Handle the form submission, e.g., call an API to reset the password
-        console.log("Password Reset Data: ", data);
+    const onSubmit = async (data) => {
+        console.log("Password Reset Data: ", data.confirmPassword);
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('userId');
+            await axios.post(`http://localhost:8000/api/v1/users/user/forgot-password/reset-password?_id=${userId}`, { newPassword: data.confirmPassword });
+            console.log("Password reset successful");
+            console.log(data);
+            setLoginAction('RedirectLogin');
+        } catch (error) {
+            console.error("Error resetting password:", error);
+        }
     };
 
     return (
@@ -49,7 +57,17 @@ const ResetPassword = () => {
                             <Input
                                 id="password"
                                 type="password"
-                                {...register("password", { required: "Password is required" })}
+                                {...register("password", {
+                                    required: 'Password is required',
+                                    minLength: {
+                                        value: 8,
+                                        message: 'Password must be at least 8 characters',
+                                    },
+                                    pattern: {
+                                        value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
+                                        message: 'Password must contain at least one letter and one number',
+                                    },
+                                })}
                             />
                             {errors.password && <p className="text-red-500 text-xs">{errors.password.message}</p>}
                         </div>
@@ -61,7 +79,7 @@ const ResetPassword = () => {
                                 id="confirm-password"
                                 type="password"
                                 {...register("confirmPassword", {
-                                    required: "Confirm Password is required",
+                                    required: 'Confirm password is required',
                                     validate: (value) =>
                                         value === watch("password") || "Passwords do not match",
                                 })}
@@ -72,12 +90,7 @@ const ResetPassword = () => {
                             Reset Password
                         </Button>
                     </form>
-                    <p className="mt-4 text-center">
-                        Back to Login?{" "}
-                        <a onClick={() => setLoginAction('RedirectLogin')}  className="text-blue-600 hover:underline">
-                            Log in
-                        </a>
-                    </p>
+
                 </div>
             </div>
             <div className="w-full lg:w-1/2 bg-blue-700 p-8 flex items-center justify-center">

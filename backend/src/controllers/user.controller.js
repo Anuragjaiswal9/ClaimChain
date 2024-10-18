@@ -288,24 +288,24 @@ const forgotPassword = asyncHandler(async(req, res) => {
 });
 
 const redirectingUser = asyncHandler(async(req, res) => {
-  const id = req.id;
+  const _id = req.id;
 
-  if(id){
-    await Token.deleteOne({_id: id})
-    res.redirect("http://localhost:5173/forgot-password");
+  if(_id){
+    await Token.deleteOne({_id: _id})
+    res.redirect(`http://localhost:5173/Reset-Password?userId=${_id}`);
   } else {
     return res.status(400).send("Bad Request: ID not found");
   }
 });
 
 const resetPassword = asyncHandler(async (req, res) => {
-  const {id} = req.params;
+  const {_id} = req.query;
   const {newPassword} = req.body;
 
   const hashedPassword = await bcrypt.hash(newPassword, 10);
 
   await User.findByIdAndUpdate(
-    id,
+    _id,
     {
       $set: {
         password: hashedPassword

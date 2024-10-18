@@ -10,29 +10,32 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { CameraIcon, User } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import MyNavbar from "./MyNavbar"
-import { useSelector } from 'react-redux';
 import { selectFullName } from '../features/Users/UserSlice';
 import axios from "axios"
-
+import { useDispatch, useSelector } from 'react-redux';
+import { setAvatarName } from '../features/Users/UserSlice';
+import { selectAvatarName } from '../features/Users/UserSlice';
 
 export default function EditProfile() {
     const { register, handleSubmit, watch, formState: { errors }, reset, getValues } = useForm()
-    const [avatar, setAvatar] = useState("/placeholder.svg?height=200&width=200")
     const [isEditingUsername, setEditingUsername] = useState(false)
     const [isChangingPassword, setChangingPassword] = useState(false)
+    const [isUploading, setIsUploading] = useState(false); // State for upload status
+    const dispatch = useDispatch();
 
     const fullName = useSelector(selectFullName);
+    const AvatarName = useSelector(selectAvatarName);
 
     const handleFileChange = async (event) => {
         const file = event.target.files?.[0];
 
         if (file) {
-            // Create FormData object to store the file
             const formData = new FormData();
             formData.append("avatar", file);
 
+            setIsUploading(true);  // Start the uploading state
+
             try {
-                // Post request to upload the file
                 const response = await axios.post("http://localhost:8000/api/v1/users/user/update-profile", formData, {
                     withCredentials: true,
                     headers: {
@@ -40,41 +43,30 @@ export default function EditProfile() {
                     }
                 });
 
-                setAvatar(response.data.data.avatar)
-
-                console.log("File uploaded successfully", response.data);
+                dispatch(setAvatarName(response.data.data.avatar));
             } catch (error) {
                 console.error("Error uploading file", error);
+            } finally {
+                setIsUploading(false);  // End the uploading state
             }
         }
     };
 
-
-
-
-
-
     const onSubmitUsername = async (data) => {
-        console.log("Username Data: ", { username: data.fullName })
         await axios.post("http://localhost:8000/api/v1/users/user/update-profile", { fullName: data.fullName }, { withCredentials: true });
-        // Handle the username update, e.g., send to the backend
         setEditingUsername(false)
-        reset({ username: data.fullName }) // Optionally reset the form with the updated username
+        reset({ username: data.fullName })
     }
 
     const onSubmitPassword = async () => {
         const { oldPassword, newPassword, confirmPassword } = getValues()
-        console.log("Password Data: ", { oldPassword, newPassword, confirmPassword })
         await axios.post("http://localhost:8000/api/v1/users/user/update-profile/password", { oldPassword, newPassword }, { withCredentials: true });
-        // Handle the password change, e.g., send only password data to the backend
         setChangingPassword(false)
     }
 
     return (
         <div>
-            <div>
-                <MyNavbar />
-            </div>
+            <MyNavbar />
 
             <div className="mt-5">
                 <Card className="max-w-2xl mx-auto">
@@ -84,9 +76,18 @@ export default function EditProfile() {
                     <CardContent>
                         {/* Avatar and Photo Upload Section */}
                         <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
-                            <Avatar className="h-32 w-32 sm:h-40 sm:w-40">
-                                <AvatarImage src={avatar} alt="Profile picture" />
-                                <AvatarFallback><User className="h-20 w-20 border border-gray-200  text-gray-400" /></AvatarFallback>
+                            <Avatar className="h-32 w-32 sm:h-40 sm:w-40 relative">
+                                {isUploading ? (
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="spinner-border animate-spin inline-block w-10 h-10 border-4 border-t-transparent border-gray-400 rounded-full" />
+                                    </div>
+                                ) : AvatarName ? (
+                                    <AvatarImage src={AvatarName} alt="Profile picture" />
+                                ) : (
+                                    <AvatarFallback>
+                                        <User className="h-20 w-20 border border-gray-200 text-gray-400" />
+                                    </AvatarFallback>
+                                )}
                             </Avatar>
                             <div className="flex flex-col space-y-2">
                                 <Input
@@ -111,12 +112,10 @@ export default function EditProfile() {
                             </div>
                         </div>
 
-
-
                         {/* Username Edit Section */}
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="username">Username</Label>
+
                                 {isEditingUsername ? (
                                     <form onSubmit={handleSubmit(onSubmitUsername)} className="space-y-4">
                                         <Input
@@ -169,8 +168,8 @@ export default function EditProfile() {
                                                 type="password"
                                                 {...register("oldPassword", { required: "Current password is required" })}
                                             />
-                                            {errors.currentPassword && (
-                                                <p className="text-sm text-danger">{errors.currentPassword.message}</p>
+                                            {errors.oldPassword && (
+                                                <p className="text-sm text-danger">{errors.oldPassword.message}</p>
                                             )}
                                         </div>
 
@@ -179,7 +178,17 @@ export default function EditProfile() {
                                             <Input
                                                 id="new-password"
                                                 type="password"
-                                                {...register("newPassword", { required: "New password is required" })}
+                                                {...register("newPassword", {
+                                                    required: "New password is required",
+                                                    minLength: {
+                                                        value: 8,
+                                                        message: 'Password must be at least 8 characters',
+                                                    },
+                                                    pattern: {
+                                                        value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
+                                                        message: 'Password must contain at least one letter and one number',
+                                                    },
+                                                })}
                                             />
                                             {errors.newPassword && (
                                                 <p className="text-sm text-danger">{errors.newPassword.message}</p>
@@ -193,6 +202,14 @@ export default function EditProfile() {
                                                 type="password"
                                                 {...register("confirmPassword", {
                                                     required: "Please confirm your new password",
+                                                    minLength: {
+                                                        value: 8,
+                                                        message: 'Password must be at least 8 characters',
+                                                    },
+                                                    pattern: {
+                                                        value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
+                                                        message: 'Password must contain at least one letter and one number',
+                                                    },
                                                     validate: (value) =>
                                                         value === watch("newPassword") || "Passwords do not match",
                                                 })}

@@ -21,7 +21,7 @@ const ResetPassword = () => {
 
     useEffect(() => {
         if (LoginAction === 'RedirectLogin') {
-            navigate('/');  // Navigate to Home page
+            navigate('/Reset-Successful');  // Navigate to Home page
         }
 
         // Clear action after navigating to avoid unnecessary re-trigger

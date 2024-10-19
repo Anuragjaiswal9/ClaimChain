@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect  } from "react"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -8,65 +8,114 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
-import { CalendarIcon, UploadIcon, MapPinIcon } from "lucide-react"
+import { useNavigate } from 'react-router-dom';
+import { CalendarIcon, UploadIcon, MapPinIcon, XIcon } from "lucide-react"
 
-export default function LostFoundItemReport() {
+export default function ReportItem() {
   const [isLostItem, setIsLostItem] = useState(true)
-  const [photoPreview, setPhotoPreview] = useState(null)
+  const [photoPreviews, setPhotoPreviews] = useState([])
+  const [photoFiles, setPhotoFiles] = useState([])
   const fileInputRef = useRef(null)
+  const navigate = useNavigate();
+  
 
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm()
+  const { register, handleSubmit,  formState: { errors } } = useForm()
+
+  useEffect(() => {
+    if (photoFiles.length === 3) {
+      sendPhotosToBackend()
+    }
+  }, [photoFiles])
 
   const handlePhotoChange = (event) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setPhotoPreview(reader.result)
-      }
-      reader.readAsDataURL(file)
-      setValue("photo", file) // Set the file in react-hook-form
+    const files = event.target.files
+    if (files) {
+      const newPreviews = []
+      const newFiles = []
+      Array.from(files).forEach((file) => {
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          newPreviews.push(reader.result)
+          newFiles.push(file)
+          if (newPreviews.length === files.length) {
+            setPhotoPreviews((prev) => [...prev, ...newPreviews].slice(0, 3))
+            setPhotoFiles((prev) => [...prev, ...newFiles].slice(0, 3))
+          }
+        }
+        reader.readAsDataURL(file)
+      })
     }
   }
 
-  const handleEditPhoto = () => {
-    fileInputRef.current.click() // Trigger file input to allow selecting another photo
+  const handleRemovePhoto = (index) => {
+    setPhotoPreviews((prev) => prev.filter((_, i) => i !== index))
+    setPhotoFiles((prev) => prev.filter((_, i) => i !== index))
   }
 
-  // Drag-and-drop event handlers
   const handleDrop = (event) => {
     event.preventDefault()
-    const file = event.dataTransfer.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setPhotoPreview(reader.result)
-      }
-      reader.readAsDataURL(file)
-      setValue("photo", file) // Set the file in react-hook-form
+    const files = event.dataTransfer.files
+    if (files) {
+      const newPreviews = []
+      const newFiles = []
+      Array.from(files).forEach((file) => {
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          newPreviews.push(reader.result)
+          newFiles.push(file)
+          if (newPreviews.length === files.length) {
+            setPhotoPreviews((prev) => [...prev, ...newPreviews].slice(0, 3))
+            setPhotoFiles((prev) => [...prev, ...newFiles].slice(0, 3))
+          }
+        }
+        reader.readAsDataURL(file)
+      })
     }
   }
 
   const handleDragOver = (event) => {
-    event.preventDefault() // Prevent default to allow drop
+    event.preventDefault()
   }
 
-  const onSubmit = (data) => {
+  const sendPhotosToBackend = async () => {
+    const formData = new FormData()
+    photoFiles.forEach((file, index) => {
+      formData.append(`photo${index + 1}`, file)
+    })
+
+    console.log(formData);
+
+    //backend api
+
+  }
+
+  const onSubmit = async (data) => {
+    if (photoFiles.length < 3) {
+      alert("Please upload at least 3 photos.")
+      return
+    }
+
     const reportData = {
-      type: isLostItem ? "lost" : "found", // Distinguish between lost and found
-      username: data.username,
+      type: isLostItem ? "lost" : "found",
       description: data.description,
-      photo: data.photo,
-      location: isLostItem ? data.lastSeenLocation : data.receiveLocation, // Distinct location fields
+      location: isLostItem ? data.lastSeenLocation : data.receiveLocation,
       datetime: data.datetime,
     }
     console.log(reportData)
+
+    navigate('/Home')
+
+    //backend api
+
+
+
+
   }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl mx-auto shadow-xl">
-        <CardHeader className=" bg-blue-700  text-white rounded-t-lg">
+        <CardHeader className="bg-blue-700 text-white rounded-t-lg">
           <CardTitle className="text-2xl md:text-3xl font-bold text-center">
             {isLostItem ? "Report a Lost Item" : "Report a Found Item"}
           </CardTitle>
@@ -79,24 +128,38 @@ export default function LostFoundItemReport() {
                 id="item-type"
                 checked={!isLostItem}
                 onCheckedChange={() => setIsLostItem(!isLostItem)}
-                className="data-[state=checked]:bg-blue-700  border border-gray-300"
+                className="data-[state=checked]:bg-blue-700 border border-gray-300"
               />
               <Label htmlFor="item-type" className="text-lg font-medium text-slate-700">Found</Label>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="photo" className="text-lg font-medium text-slate-700">Photo of Item</Label>
+              <Label htmlFor="photos" className="text-lg font-medium text-slate-700">Photos of Item (at least 3)</Label>
               <div
                 className="relative w-full h-64 border-2 border-slate-300 border-dashed rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors duration-300 overflow-hidden"
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
               >
                 <label
-                  htmlFor="photo"
+                  htmlFor="photos"
                   className="flex flex-col items-center justify-center w-full h-full cursor-pointer"
                 >
-                  {photoPreview ? (
-                    <img src={photoPreview} alt="Uploaded item" className="w-full h-full object-cover" />
+                  {photoPreviews.length > 0 ? (
+                    <div className="grid grid-cols-3 gap-2 p-2 w-full h-full">
+                      {photoPreviews.map((preview, index) => (
+                        <div key={index} className="relative">
+                          <img src={preview} alt={`Uploaded item ${index + 1}`} className="w-full h-full object-cover rounded" />
+                          <button
+                            type="button"
+                            onClick={() => handleRemovePhoto(index)}
+                            className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                            aria-label={`Remove photo ${index + 1}`}
+                          >
+                            <XIcon className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                       <UploadIcon className="w-10 h-10 mb-4 text-slate-500" />
@@ -107,27 +170,18 @@ export default function LostFoundItemReport() {
                     </div>
                   )}
                   <Input
-                    id="photo"
+                    id="photos"
                     type="file"
                     className="hidden"
                     accept="image/*"
+                    multiple
                     onChange={handlePhotoChange}
-                    ref={fileInputRef} // Direct reference for file input trigger
+                    ref={fileInputRef}
                   />
                 </label>
-                {errors.photo && <span className="text-red-500 absolute bottom-2 left-2">Photo is required</span>}
               </div>
-              {photoPreview && (
-                <Button
-                  type="button"
-                  onClick={handleEditPhoto}
-                  className="mt-4 text-lg py-2 bg-foreground h hover:bg-default-800 transition-all duration-300"
-                >
-                  Edit Photo
-                </Button>
-              )}
+              {photoPreviews.length < 3 && <span className="text-red-500">Please upload at least 3 photos</span>}
             </div>
-
 
             <div className="space-y-2">
               <Label htmlFor="description" className="text-lg font-medium text-slate-700">Description of the Item</Label>
@@ -140,7 +194,6 @@ export default function LostFoundItemReport() {
               {errors.description && <span className="text-red-500">Description is required</span>}
             </div>
 
-            {/* Distinct location inputs for lost and found */}
             <div className="space-y-2">
               <Label htmlFor={isLostItem ? "lastSeenLocation" : "receiveLocation"} className="text-lg font-medium text-slate-700">
                 {isLostItem ? "Last Seen Location" : "Item Receive Location"}

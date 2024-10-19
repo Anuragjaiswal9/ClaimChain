@@ -84,12 +84,12 @@ function MyNavbar() {
 
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
-            <Avatar
+          <Avatar
               isBordered
               as="button"
-              className="max-sm:w-14 h-auto"
+              className="transition-transform max-sm:w-14 max-sm:h-10"
               color="primary"
-              size="md"
+              size="sm"
               src={AvatarName}
             />
           </DropdownTrigger>
@@ -113,3 +113,14 @@ function MyNavbar() {
 }
 
 export default MyNavbar;
+
+
+{/* <Avatar
+              isBordered
+              as="button"
+              className="max-sm:w-14 h-auto"
+              color="primary"
+              size="md"
+              name="Jason Hughes"
+              src={AvatarName}
+            /> */}

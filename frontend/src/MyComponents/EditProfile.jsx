@@ -32,6 +32,7 @@ export default function EditProfile() {
         if (file) {
             const formData = new FormData();
             formData.append("avatar", file);
+            console.log(formData);
 
             setIsUploading(true);  // Start the uploading state
 

@@ -5,7 +5,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { sendEmail } from "../utils/nodemailer.js";
 import crypto from "crypto";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { uploadAvatarImageOnCloudinary } from "../utils/avatarcloudinary.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -199,14 +199,11 @@ const updateUserDetails = asyncHandler(async (req, res) => {
     );
   }
 
-  console.log(avatarLocalPath)
-
   let avatar;
   if (avatarLocalPath) {
     // If avatar is provided, upload it to Cloudinary
-    avatar = await uploadOnCloudinary(avatarLocalPath);
+    avatar = await uploadAvatarImageOnCloudinary(avatarLocalPath);
   }
-  console.log(avatar);
 
   // Object to store update fields
   const updateFields = {};

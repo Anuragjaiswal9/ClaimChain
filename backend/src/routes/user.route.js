@@ -17,6 +17,7 @@ import { verifyEmail } from "../middlewares/verifyEmail.middleware.js";
 
 const router = Router();
 
+//user routes
 router.route("/register").post(registerUser);
 router.route("/user/verify/:id/:token").get(verifyEmail, verifyUser);
 router.route("/login").post(loginUser);

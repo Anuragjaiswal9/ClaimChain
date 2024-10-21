@@ -8,18 +8,21 @@ const removeOldUnverifiedUsers = async () => {
   try {
     const cutoff = new Date(Date.now() - 60 * 1000); // 1 minute ago
     const unverifiedUsers = await User.find({ isVerified: false, createdAt: { $lt: cutoff } });
-    // console.log("Unverified Users:", unverifiedUsers);
 
-    const { acknowledged, deletedCount } = await User.deleteMany({ isVerified: false, createdAt: { $lt: cutoff } });
-    // console.log(`${deletedCount} unverified users older than 1 minute have been deleted`);
+    // Extract the user IDs of the unverified users
+    const unverifiedUserIds = unverifiedUsers.map(user => user._id);
 
-    if (deletedCount > 0) {
-      await Token.deleteMany({ userId: { $in: unverifiedUsers.map(user => user._id) } });
+    if (unverifiedUserIds.length > 0) {
+      // Delete unverified users
+      await Token.deleteMany({ _id: { $in: unverifiedUserIds } });
+      const { acknowledged, deletedCount } = await User.deleteMany({ _id: { $in: unverifiedUserIds } });
+      // console.log(`${deletedCount} unverified users older than 1 minute have been deleted`);
     }
   } catch (error) {
     console.error('Error removing old unverified users:', error);
   }
 };
+
 
 
 // Schedule to run every minutes (for testing, adjust as needed for production)

@@ -27,14 +27,14 @@ const generateAccessAndRefreshToken = async (userId) => {
   }
 };
 
-const sendMail = async(userId, email, message) => {
+const sendMail = async(userId, email, message, subject) => {
   const token = await Token.create({
     _id: userId,
     token: crypto.randomBytes(32).toString("hex"),
   });
 
   const sentMessage = `${message}/${userId}/${token.token}`;
-  await sendEmail(email, sentMessage);
+  await sendEmail(email, subject, sentMessage );
 }
 
 const registerUser = asyncHandler(async (req, res) => {
@@ -60,7 +60,8 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   const message = `${process.env.BASE_URL}/user/verify`;
-  sendMail(user._id, user.email, message);
+  const subject = "Email Verification";
+  sendMail(user._id, user.email, message, subject);
 
   const createdUser = await User.findById(user._id).select(
     "-password -refreshToken"
@@ -279,7 +280,8 @@ const forgotPassword = asyncHandler(async(req, res) => {
   }
 
   const message = `${process.env.BASE_URL}/user/forgot-password`;
-  sendMail(user._id, user.email, message);
+  const subject = "Email Verification";
+  sendMail(user._id, user.email, message, subject);
 
   res.status(200).send("bad request")
 });

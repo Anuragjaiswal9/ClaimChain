@@ -129,6 +129,39 @@ const deleteItem = asyncHandler(async(req, res) => {
     }
 
     res.status(410).json(new ApiResponse(410, {}, "Item deleted successfully"))
-}) 
+});
 
-export { uploadItem, editItemDetails, deleteItem };
+const getAllItem = asyncHandler(async(req, res) => {
+  //get amount of data as query from frontend 
+  //ex:- "http://localhost:5173/main-page?limit=8&skip=8" now backend will get that limit as ```const { limit, skip } = req.query;```
+  //limit is how many more to send and skip is how many already have been sent and we have to skip sending that amount
+  //have that amount of data to be sent from backend while skipping those document that has already been sent
+  //user .skip().limit() to achieve that fucntionality
+
+  //flow of code
+  //get limit and skip from query
+  //use findall and chain it with .skip() and then .limit()
+  //check if data is present or not, if yes then send data as response if not send null
+
+  const limit = parseInt(req.query.limit) || 10; 
+  const skip = parseInt(req.query.skip) || 0;    
+
+    if (isNaN(limit) || isNaN(skip) || limit <= 0 || skip < 0) {
+        throw new ApiError(400, "Invalid limit or skip values");
+    }
+
+    const totalItems = await Item.countDocuments({});
+
+    const items = await Item.find({})
+        .skip(skip)
+        .limit(limit);
+
+    if (items.length === 0) {
+        return res.status(404).json(new ApiResponse(404, [], "No items found"));
+    }
+
+     res.status(200).json(new ApiResponse(200, { items, totalItems }, "Items sent successfully"));
+
+});
+
+export { uploadItem, editItemDetails, deleteItem, getAllItem };

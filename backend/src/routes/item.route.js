@@ -3,6 +3,7 @@ import { upload } from "../middlewares/multer.middleware.js";
 import {
   deleteItem,
   editItemDetails,
+  getAllItem,
   uploadItem,
 } from "../controllers/item.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -32,6 +33,8 @@ router.route("/item/edit-details").post(
   editItemDetails
 );
 
+router.route("").get(getAllItem)
 router.route("/item/delete-item").post(verifyJWT, deleteItem);
+
 
 export default router;

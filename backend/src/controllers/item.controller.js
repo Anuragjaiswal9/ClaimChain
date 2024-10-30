@@ -151,10 +151,17 @@ const getAllItem = asyncHandler(async(req, res) => {
     }
 
     const totalItems = await Item.countDocuments({});
-
-    const items = await Item.find({})
+    
+    let items
+    if(totalItems>=8){
+      items = await Item.find({})
         .skip(skip)
         .limit(limit);
+    } else {
+      items = await Item.find({})
+    }
+
+    
 
     if (items.length === 0) {
         return res.status(404).json(new ApiResponse(404, [], "No items found"));

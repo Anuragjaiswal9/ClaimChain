@@ -40,6 +40,7 @@ function Myform({ }) {
     console.log(response);
     localStorage.setItem("refreshToken", response.data.data.refreshToken );
     dispatch(setFullName(response.data.data.user.fullName));
+    localStorage.setItem("senderId",response.data.data.user._id)
     handleLogin();
 
   }

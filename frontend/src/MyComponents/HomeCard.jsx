@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Check, MapPin, Calendar, Clock } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
 
 export default function HomeCard({
   productName,
@@ -9,17 +10,18 @@ export default function HomeCard({
   images,
   location,
   date,
-  time
+  time,
+  owner,
 }) {
   const [isClaimed, setIsClaimed] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const navigate = useNavigate();
 
-  const handleClaim = () => {
-    setTimeout(() => {
-      setIsClaimed(true);
-     
-    }, 1000);
+  const handleClaim = (receiverId) => {
+    const senderId = localStorage.getItem('senderId')
+    navigate('/chat',{state:{receiverId,senderId}})
+
   };
   
   const changeImage = (newIndex) => {
@@ -101,7 +103,8 @@ export default function HomeCard({
       </CardContent>
       <CardFooter className="flex justify-between items-center p-6 bg-muted/50">
         {!isClaimed ? (
-          <Button onClick={handleClaim} className="w-full bg-foreground hover:bg-default-800">Claim Now</Button>
+          <Button onClick={()=>handleClaim(owner)} className="w-full bg-foreground hover:bg-default-800">Claim Now</Button>
+
         ) : (
           <div className="w-full flex justify-between items-center">
             <span className="text-sm font-medium text-muted-foreground">Claimed</span>

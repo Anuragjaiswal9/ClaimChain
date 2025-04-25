@@ -1,3 +1,4 @@
+import http from 'http'
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser"
@@ -21,9 +22,15 @@ app.use(cookieParser())
 //routes
 import userRouter from "./routes/user.route.js";
 import itemRouter from "./routes/item.route.js"
+import { initializeSocket } from './utils/socket.io.js';
 
 //routes declaration
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/items", itemRouter);
 
-export { app };
+const server = http.createServer(app);
+
+// Initialize Socket.IO
+initializeSocket(server);
+
+export { app , server };

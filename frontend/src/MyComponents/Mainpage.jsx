@@ -12,10 +12,12 @@ function Mainpage() {
       try {
         const response = await axios.get('http://localhost:8000/api/v1/items'); // Replace with your API endpoint
         setData(response.data.data.items); // Store the entire array of items
+        
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
+    
 
     fetchData();
   }, []);
@@ -36,6 +38,7 @@ function Mainpage() {
               location={item.location}
               date={item.date}
               time={item.time}
+              owner={item.owner}
             />
           ))}
         </div>

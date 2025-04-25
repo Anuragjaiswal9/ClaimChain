@@ -9,17 +9,22 @@ import {
 import Profile from "./Profile";
 import Contacts from "./Contacts";
 import socketAPI from "@/services/socketAPI";
+
 import { useLocation } from "react-router-dom";
+import SocketService from "@/services/socketServices";
 
 function Home() {
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [messages, setMessages] = useState([]);
-
   const location = useLocation();
+  const [selectedUser, setSelectedUser] = useState(() => location.state.receiverId);
+
+
+  const [messages, setMessages] = useState([]);
   const username = location.state.senderId;
+  console.log(username);
   useEffect(() => {
     if (username) {
       // Establish socket connection and pass userId in query
+
       socketAPI.connect(username);
 
       // socketAPI.onPrivateMessage((data) => {
@@ -28,11 +33,13 @@ function Home() {
       // });
 
       // Cleanup on unmount
+
       return () => {
         socketAPI.disconnect();
         console.log("Socket disconnected for user:", username);
       };
     }
+  
   }, [username]);
 
   // Subscribe to private messages when the component mounts
@@ -65,7 +72,6 @@ function Home() {
         direction="horizontal"
         className="h-full w-max rounded-lg border md:min-w-[450px]"
       >
-        
         <ResizablePanel defaultSize={75}>
           <ResizablePanelGroup direction="vertical">
             <ResizablePanel defaultSize={8}>

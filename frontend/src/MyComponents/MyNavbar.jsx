@@ -1,44 +1,70 @@
-import React, { useState, useEffect } from 'react';
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Input, Dropdown, DropdownItem, DropdownTrigger, DropdownMenu, Avatar } from "@nextui-org/react";
-import { Logo } from './Logo';
-import { SearchIcon } from './SearchIcon';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { selectFullName, selectAvatarName } from '../features/Users/UserSlice';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import {
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  Link,
+  Input,
+  Dropdown,
+  DropdownItem,
+  DropdownTrigger,
+  DropdownMenu,
+  Avatar,
+} from "@nextui-org/react";
+import { Logo } from "./Logo";
+import { SearchIcon } from "./SearchIcon";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectFullName, selectAvatarName } from "../features/Users/UserSlice";
+import axios from "axios";
 import Notification from "./Notification";
+import { BACKEND_URL } from "@/constants";
 
 function MyNavbar() {
-  const [navAction, setNavAction] = useState(null);  // State to track navigation action
+  const [navAction, setNavAction] = useState(null); // State to track navigation action
   const navigate = useNavigate();
   const fullName = useSelector(selectFullName);
   const AvatarName = useSelector(selectAvatarName);
 
+  const handleMessage = async () => {
+    try {
+      const senderId = localStorage.getItem("senderId");
+      const response = await axios.get(
+        `${BACKEND_URL}/api/v1/users/receiver-id`
+      );
+      const receiverId = response.data.receiverId; // or whatever key you're returning
+      navigate("/chat", { state: { senderId, receiverId } });
+    } catch (error) {
+      console.error("Error fetching receiver ID:", error);
+    }
+  };
+
   // Effect to handle navigation actions
   useEffect(() => {
-
     const handleLogout = async () => {
       try {
-        await axios.post("http://localhost:8000/api/v1/users/user/logout", {}, { withCredentials: true });
-        navigate('/');  // Navigate to logout or home page
+        await axios.post(
+          "http://localhost:8000/api/v1/users/user/logout",
+          {},
+          { withCredentials: true }
+        );
+        navigate("/"); // Navigate to logout or home page
       } catch (error) {
         console.log(error);
       }
     };
 
-    if (navAction === 'Home') {
-      navigate('/Home');  // Navigate to Home page
-    } else if (navAction === 'Report') {
-      navigate('/Report-Item');  // Example page for 'Lost'
-    }
-    else if (navAction === 'logout') {
+    if (navAction === "Home") {
+      navigate("/Home"); // Navigate to Home page
+    } else if (navAction === "Report") {
+      navigate("/Report-Item"); // Example page for 'Lost'
+    } else if (navAction === "logout") {
       handleLogout(); // Call the async logout function
-    } else if (navAction === 'settings') {
-      navigate('/Edit');  // Navigate to the settings page
-    }
-    else if(navAction === 'Notification')
-    {
-      navigate('/Notification');
+    } else if (navAction === "settings") {
+      navigate("/Edit"); // Navigate to the settings page
+    } else if (navAction === "Notification") {
+      navigate("/Notification");
     }
 
     // Clear action after navigating to avoid unnecessary re-trigger
@@ -57,22 +83,24 @@ function MyNavbar() {
         <NavbarItem>
           <Link
             color="foreground"
-            className='text-lg'
+            className="text-lg"
             href="#"
-            onClick={() => setNavAction('Home')}  // Set the action to 'Home'
+            onClick={() => setNavAction("Home")} // Set the action to 'Home'
           >
             Home
           </Link>
         </NavbarItem>
 
         <NavbarItem>
-          <Link href="#"  color="foreground" className='text-lg' onClick={() => setNavAction('Report')}>
+          <Link
+            href="#"
+            color="foreground"
+            className="text-lg"
+            onClick={() => setNavAction("Report")}
+          >
             Report Item
           </Link>
         </NavbarItem>
-
-      
-
       </NavbarContent>
 
       <NavbarContent as="div" className="items-center" justify="end">
@@ -81,7 +109,8 @@ function MyNavbar() {
             base: "max-w-full sm:max-w-[10rem] h-10",
             mainWrapper: "h-full",
             input: "text-small",
-            inputWrapper: "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
+            inputWrapper:
+              "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
           }}
           placeholder="Type to search..."
           size="sm"
@@ -91,7 +120,7 @@ function MyNavbar() {
 
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
-          <Avatar
+            <Avatar
               isBordered
               as="button"
               className="transition-transform max-sm:w-14 max-sm:h-10"
@@ -100,28 +129,35 @@ function MyNavbar() {
               src={AvatarName}
             />
           </DropdownTrigger>
-          <DropdownMenu aria-label="Profile Actions" variant="flat" onAction={(key) => setNavAction(key)}>
+          <DropdownMenu
+            aria-label="Profile Actions"
+            variant="flat"
+            onAction={(key) => setNavAction(key)}
+          >
             <DropdownItem key="profile" className="h-14 gap-2">
               <p className="font-semibold">Signed in as</p>
               <p className="text-sky-500">{fullName}</p>
             </DropdownItem>
-            <DropdownItem className='sm:hidden' key="Home">Home</DropdownItem>
-            <DropdownItem className='sm:hidden' key="Report">Report Item</DropdownItem>
+            <DropdownItem className="sm:hidden" key="Home">
+              Home
+            </DropdownItem>
+            <DropdownItem className="sm:hidden" key="Report">
+              Report Item
+            </DropdownItem>
             <DropdownItem key="settings">My Settings</DropdownItem>
-            <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
+            <DropdownItem onClick={handleMessage} key="help_and_feedback">
+              Message
+            </DropdownItem>
             <DropdownItem key="logout" color="danger">
               Log Out
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>
 
-        <Notification/>
-
+        <Notification />
       </NavbarContent>
     </Navbar>
   );
 }
 
 export default MyNavbar;
-
-

@@ -3,6 +3,9 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Check, MapPin, Calendar, Clock } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
+import { BACKEND_URL } from '@/constants';
+import axios from 'axios';
+
 
 export default function HomeCard({
   productName,
@@ -18,10 +21,18 @@ export default function HomeCard({
   const [isTransitioning, setIsTransitioning] = useState(false);
   const navigate = useNavigate();
 
-  const handleClaim = (receiverId) => {
-    const senderId = localStorage.getItem('senderId')
-    navigate('/chat',{state:{receiverId,senderId}})
-
+  const handleClaim = async (receiverId) => {
+    try {
+      const senderId = localStorage.getItem('senderId');
+  
+      // Make the POST request and wait for it to complete
+      await axios.post(`${BACKEND_URL}/api/v1/users/receiver-id`, { receiverId:senderId });
+  
+      // Navigate after the post is successful
+      navigate('/chat', { state: { receiverId, senderId } });
+    } catch (error) {
+      console.error("Error in handleClaim:", error);
+    }
   };
   
   const changeImage = (newIndex) => {

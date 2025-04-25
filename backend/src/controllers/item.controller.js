@@ -153,7 +153,7 @@ const getAllItem = asyncHandler(async(req, res) => {
     const totalItems = await Item.countDocuments({});
     
     let items
-    if(totalItems>=8){
+    if(totalItems>8){
       items = await Item.find({})
         .skip(skip)
         .limit(limit);

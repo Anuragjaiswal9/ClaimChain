@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectFullName, selectAvatarName } from '../features/Users/UserSlice';
 import axios from 'axios';
+import Notification from "./Notification";
 
 function MyNavbar() {
   const [navAction, setNavAction] = useState(null);  // State to track navigation action
@@ -34,6 +35,10 @@ function MyNavbar() {
       handleLogout(); // Call the async logout function
     } else if (navAction === 'settings') {
       navigate('/Edit');  // Navigate to the settings page
+    }
+    else if(navAction === 'Notification')
+    {
+      navigate('/Notification');
     }
 
     // Clear action after navigating to avoid unnecessary re-trigger
@@ -65,6 +70,8 @@ function MyNavbar() {
             Report Item
           </Link>
         </NavbarItem>
+
+      
 
       </NavbarContent>
 
@@ -107,6 +114,9 @@ function MyNavbar() {
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>
+
+        <Notification/>
+
       </NavbarContent>
     </Navbar>
   );
@@ -115,12 +125,3 @@ function MyNavbar() {
 export default MyNavbar;
 
 
-{/* <Avatar
-              isBordered
-              as="button"
-              className="max-sm:w-14 h-auto"
-              color="primary"
-              size="md"
-              name="Jason Hughes"
-              src={AvatarName}
-            /> */}

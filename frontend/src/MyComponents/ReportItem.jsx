@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect  } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { useNavigate } from 'react-router-dom';
 import { CalendarIcon, UploadIcon, MapPinIcon, XIcon } from "lucide-react"
+import axios from "axios"
 
 export default function ReportItem() {
   const [isLostItem, setIsLostItem] = useState(true)
@@ -17,15 +18,9 @@ export default function ReportItem() {
   const [photoFiles, setPhotoFiles] = useState([])
   const fileInputRef = useRef(null)
   const navigate = useNavigate();
-  
+  const [images, SetImages] = useState([])
 
-  const { register, handleSubmit,  formState: { errors } } = useForm()
-
-  useEffect(() => {
-    if (photoFiles.length === 3) {
-      sendPhotosToBackend()
-    }
-  }, [photoFiles])
+  const { register, handleSubmit, formState: { errors } } = useForm()
 
   const handlePhotoChange = (event) => {
     const files = event.target.files
@@ -77,16 +72,37 @@ export default function ReportItem() {
     event.preventDefault()
   }
 
-  const sendPhotosToBackend = async () => {
+  const sendPhotosToBackend = async (data) => {
     const formData = new FormData()
-    photoFiles.forEach((file, index) => {
-      formData.append(`photo${index + 1}`, file)
+
+    // Append photos to FormData
+    photoFiles.forEach((file) => {
+      formData.append('images', file) // 'images' should match the field expected by your backend
     })
 
-    console.log(formData);
+    // Append other form data
+    formData.append('description', data.description)
+    formData.append('location', isLostItem ? data.lastSeenLocation : data.receiveLocation)
+    formData.append('time', data.datetime)
+    formData.append('isLostItem', isLostItem)
 
-    //backend api
+    try {
+      // Send data to backend via POST request
+      const response = await axios.post("http://localhost:8000/api/v1/items/item/upload", formData, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        }
+      })
 
+      console.log(response.data)
+
+      // Navigate to the home page after successful submission
+      navigate('/Home')
+
+    } catch (error) {
+      console.error('Error uploading data:', error)
+    }
   }
 
   const onSubmit = async (data) => {
@@ -95,21 +111,8 @@ export default function ReportItem() {
       return
     }
 
-    const reportData = {
-      type: isLostItem ? "lost" : "found",
-      description: data.description,
-      location: isLostItem ? data.lastSeenLocation : data.receiveLocation,
-      datetime: data.datetime,
-    }
-    console.log(reportData)
-
-    navigate('/Home')
-
-    //backend api
-
-
-
-
+    // Send the complete form data, including photos, to the backend
+    await sendPhotosToBackend(data)
   }
 
   return (
@@ -201,35 +204,32 @@ export default function ReportItem() {
               <div className="relative">
                 <Input
                   id={isLostItem ? "lastSeenLocation" : "receiveLocation"}
-                  placeholder={isLostItem ? "Where did you last see the item?" : "Where did you find/receive the item?"}
-                  className="text-lg pl-10"
+                  placeholder={`Enter ${isLostItem ? "last seen location" : "receive location"}`}
+                  className="text-lg"
                   {...register(isLostItem ? "lastSeenLocation" : "receiveLocation", { required: true })}
                 />
-                <MapPinIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+                <MapPinIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-500" />
               </div>
-              {isLostItem ? errors.lastSeenLocation && <span className="text-red-500">Last seen location is required</span> :
-                errors.receiveLocation && <span className="text-red-500">Receive location is required</span>}
+              {(errors.lastSeenLocation || errors.receiveLocation) && <span className="text-red-500">Location is required</span>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="datetime" className="text-lg font-medium text-slate-700">Date and Time</Label>
+              <Label htmlFor="datetime" className="text-lg font-medium text-slate-700">Date & Time</Label>
               <div className="relative">
                 <Input
                   id="datetime"
                   type="datetime-local"
-                  className="text-lg pl-10"
+                  className="text-lg"
                   {...register("datetime", { required: true })}
                 />
-                <CalendarIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+                <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-500" />
               </div>
-              {errors.datetime && <span className="text-red-500">Date and time are required</span>}
+              {errors.datetime && <span className="text-red-500">Date & Time is required</span>}
             </div>
 
-            <CardFooter className="bg-slate-50 rounded-b-lg">
-              <Button type="submit" className="w-full text-lg py-6 bg-blue-700 hover:bg-blue-800 transition-all duration-300">
-                Submit Report
-              </Button>
-            </CardFooter>
+            <Button type="submit" className="w-full bg-blue-700 text-white py-3 rounded-lg">
+              Submit
+            </Button>
           </form>
         </CardContent>
       </Card>

@@ -10,6 +10,10 @@ import ResetPassword from "./MyComponents/ResetPassword";
 import ReportItem from "./MyComponents/ReportItem";
 import ProtectedRoute from "./MyComponents/ProtectedRoute";
 import PasswordResetSucc from "./MyComponents/PasswordResetSucc";
+import Notification from "./MyComponents/Notification";
+
+
+
 
 
 
@@ -65,8 +69,17 @@ function App() {
 
         <Route
           path="/Reset-Successful"
-          element={<PasswordResetSucc/>}
+          element={<PasswordResetSucc />}
         />
+
+        <Route
+          path="/Notification"
+          element={<ProtectedRoute><Notification /></ProtectedRoute>}
+        />
+
+     
+
+
 
 
       </Routes>

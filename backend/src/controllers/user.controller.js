@@ -319,6 +319,32 @@ const resetPassword = asyncHandler(async (req, res) => {
 
 });
 
+let receiverId = null;
+
+const getReceiverId = asyncHandler(async (req, res) => {
+  if (req.method === 'POST') {
+    const { receiverId: newReceiverId } = req.body;
+
+    if (!newReceiverId) {
+      return res.status(400).json({ message: 'receiverId is required' });
+    }
+
+    receiverId = newReceiverId;
+    return res.status(200).json({ message: 'receiverId stored successfully' });
+  }
+
+  if (req.method === 'GET') {
+    if (!receiverId) {
+      return res.status(404).json({ message: 'receiverId not found' });
+    }
+
+    return res.status(200).json({ receiverId });
+  }
+
+  res.status(405).json({ message: 'Method not allowed' });
+});
+
+
 export {
   registerUser,
   verifyUser,
@@ -332,4 +358,5 @@ export {
   getCurrentUser,
   updateUserDetails,
   updatePassword,
+  getReceiverId
 };

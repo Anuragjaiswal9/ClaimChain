@@ -2,6 +2,7 @@ import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
 import {
   forgotPassword,
+  getReceiverId,
   loginUser,
   logoutUser,
   redirectingUser,
@@ -25,6 +26,8 @@ router.route("/verify-token").post(verifyRefreshToken);
 router.route("/user/forgot-password").post(forgotPassword);
 router.route("/user/forgot-password/:id/:token").get(verifyEmail, redirectingUser);
 router.route("/user/forgot-password/reset-password").post(resetPassword);
+router.route('/receiver-id').get(getReceiverId).post(getReceiverId);
+
 
 //secured routes
 router.route("/user/logout").post(verifyJWT, logoutUser);

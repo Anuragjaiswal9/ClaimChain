@@ -51,10 +51,6 @@ function Home() {
     }
   }, [selectedUser]);
 
-  const handleUserClick = (username) => {
-    setSelectedUser(username); // Update the state with the selected username
-  };
-
   const handleMessageSubmit = (data) => {
     setMessages((prevMessages) => [...prevMessages, data]);
   };
